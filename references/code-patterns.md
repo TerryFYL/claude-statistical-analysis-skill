@@ -84,23 +84,23 @@ def setup_chinese_font():
         'PingFang SC',           # macOS
         'Heiti SC',              # macOS
     ]
-    
+
     available_fonts = set(f.name for f in fm.fontManager.ttflist)
-    
+
     # Find first available font
     selected_font = None
     for font in font_candidates:
         if font in available_fonts:
             selected_font = font
             break
-    
+
     if selected_font:
         plt.rcParams['font.sans-serif'] = [selected_font, 'DejaVu Sans']
-        print(f"✅ Using Chinese font: {selected_font}")
+        print(f"Using Chinese font: {selected_font}")
     else:
-        print("⚠️ No Chinese font found, text may display as boxes")
+        print("Warning: No Chinese font found, text may display as boxes")
         plt.rcParams['font.sans-serif'] = ['DejaVu Sans']
-    
+
     plt.rcParams['axes.unicode_minus'] = False
     return selected_font
 
@@ -203,23 +203,23 @@ def bootstrap_mediation(df, X, M, Y, n_boot=5000):
     """Bootstrap mediation analysis"""
     n = len(df)
     indirect_effects = []
-    
+
     for _ in range(n_boot):
         sample = df.sample(n, replace=True)
-        
+
         # Path a: X -> M
         Xa = sm.add_constant(sample[X])
         a = sm.OLS(sample[M], Xa).fit().params[X]
-        
+
         # Path b: M -> Y (controlling X)
         Xb = sm.add_constant(sample[[X, M]])
         b = sm.OLS(sample[Y], Xb).fit().params[M]
-        
+
         indirect_effects.append(a * b)
-    
+
     indirect = np.array(indirect_effects)
     ci_low, ci_high = np.percentile(indirect, [2.5, 97.5])
-    
+
     return {
         'indirect_effect': np.mean(indirect),
         'se': np.std(indirect),
@@ -234,7 +234,7 @@ def bootstrap_mediation(df, X, M, Y, n_boot=5000):
 ```python
 # Correlation heatmap
 plt.figure(figsize=(10, 8))
-sns.heatmap(corr, annot=True, fmt='.2f', cmap='RdBu_r', 
+sns.heatmap(corr, annot=True, fmt='.2f', cmap='RdBu_r',
             center=0, vmin=-1, vmax=1)
 plt.title('Correlation Matrix')
 plt.tight_layout()
@@ -286,7 +286,7 @@ kmo_all, kmo_model = calculate_kmo(df[vars])
 chi_square, p_value = calculate_bartlett_sphericity(df[vars])
 
 print(f"KMO: {kmo_model:.3f}")
-print(f"Bartlett's χ²: {chi_square:.2f}, p = {p_value:.3f}")
+print(f"Bartlett's chi-square: {chi_square:.2f}, p = {p_value:.3f}")
 
 # Determine number of factors (parallel analysis or scree plot)
 fa = FactorAnalyzer(n_factors=len(vars), rotation=None)
@@ -390,7 +390,7 @@ effects = np.array([0.3, 0.5, 0.2, 0.4, 0.35])
 variances = np.array([0.01, 0.02, 0.015, 0.012, 0.018])
 result = random_effects_meta(effects, variances)
 print(f"Pooled effect: {result['estimate']:.3f} [{result['ci_low']:.3f}, {result['ci_high']:.3f}]")
-print(f"I²: {result['I2']:.1f}%")
+print(f"I-squared: {result['I2']:.1f}%")
 ```
 
 ### Survival Analysis
@@ -485,40 +485,40 @@ plt.savefig('arima_forecast.png', dpi=300, bbox_inches='tight')
 
 ---
 
-## R Language Support (三级执行策略)
+## R Language Support (Three-tier Execution Strategy)
 
-> **执行优先级**: Python → Docker R (自动) → 输出 .R 文件 (手动)
+> **Execution priority**: Python -> Docker R (automatic) -> Output .R file (manual)
 
-### 策略说明
+### Strategy Description
 
 ```
-当需要 R 执行时：
-1. 检测 Docker R 环境是否可用
-2. 如果可用 → 在 Docker 容器中执行 R 代码
-3. 如果不可用 → 生成 .R 文件供用户在 RStudio 运行
+When R execution is required:
+1. Check if Docker R environment is available
+2. If available -> Execute R code in Docker container
+3. If not available -> Generate .R file for user to run in RStudio
 ```
 
 ---
 
-### Docker R 执行 (优先方案)
+### Docker R Execution (Preferred Approach)
 
-#### Docker 环境构建 (首次配置)
+#### Docker Environment Setup (First-time Configuration)
 
 **Dockerfile** (`docker/Dockerfile`):
 ```dockerfile
 FROM rocker/tidyverse:4.3.2
 
-# 中文支持
+# Chinese language support
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 
-# 系统依赖
+# System dependencies
 RUN apt-get update && apt-get install -y \
     libcurl4-openssl-dev libssl-dev libxml2-dev \
     libfontconfig1-dev libharfbuzz-dev libfribidi-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# R 包安装
+# R package installation
 RUN Rscript -e 'install.packages(c( \
     "lavaan", "semPlot", "lme4", "lmerTest", \
     "metafor", "mirt", "brms", "survival", "survminer", \
@@ -529,13 +529,13 @@ WORKDIR /workspace
 CMD ["R"]
 ```
 
-**构建命令**:
+**Build command**:
 ```bash
 cd docker
 docker build -t r-stats-env .
 ```
 
-#### Docker R 执行函数
+#### Docker R Execution Function
 
 ```python
 import subprocess
@@ -544,17 +544,17 @@ import tempfile
 import os
 
 def check_docker_r_available():
-    """检测 Docker R 环境是否可用"""
+    """Check if Docker R environment is available"""
     if not shutil.which('docker'):
-        return False, "Docker 未安装"
+        return False, "Docker is not installed"
 
     try:
         result = subprocess.run(['docker', 'info'],
                                 capture_output=True, timeout=5)
         if result.returncode != 0:
-            return False, "Docker 未运行"
+            return False, "Docker is not running"
     except:
-        return False, "Docker 连接失败"
+        return False, "Docker connection failed"
 
     try:
         result = subprocess.run(
@@ -562,22 +562,22 @@ def check_docker_r_available():
             capture_output=True, text=True, timeout=10
         )
         if not result.stdout.strip():
-            return False, "r-stats-env 镜像未构建"
+            return False, "r-stats-env image has not been built"
     except:
-        return False, "镜像检查失败"
+        return False, "Image check failed"
 
-    return True, "Docker R 环境可用"
+    return True, "Docker R environment is available"
 
 
 def execute_r_in_docker(r_code: str, data_file: str = None,
                         output_dir: str = None):
     """
-    在 Docker 容器中执行 R 代码
+    Execute R code in a Docker container
 
     Args:
-        r_code: R 代码字符串
-        data_file: 数据文件路径
-        output_dir: 输出目录
+        r_code: R code string
+        data_file: Data file path
+        output_dir: Output directory
 
     Returns:
         dict: {'success': bool, 'output': str, 'files': list}
@@ -588,7 +588,7 @@ def execute_r_in_docker(r_code: str, data_file: str = None,
     os.makedirs(output_dir, exist_ok=True)
     workspace_dir = os.path.dirname(os.path.abspath(data_file)) if data_file else output_dir
 
-    # 写入临时 R 脚本
+    # Write temporary R script
     with tempfile.NamedTemporaryFile(mode='w', suffix='.R',
                                       delete=False, dir=workspace_dir,
                                       encoding='utf-8') as f:
@@ -615,7 +615,7 @@ def execute_r_in_docker(r_code: str, data_file: str = None,
             'files': os.listdir(output_dir)
         }
     except subprocess.TimeoutExpired:
-        return {'success': False, 'output': '', 'errors': '执行超时 (300s)'}
+        return {'success': False, 'output': '', 'errors': 'Execution timed out (300s)'}
     except Exception as e:
         return {'success': False, 'output': '', 'errors': str(e)}
     finally:
@@ -623,17 +623,17 @@ def execute_r_in_docker(r_code: str, data_file: str = None,
             os.remove(script_path)
 ```
 
-#### Docker R 使用示例
+#### Docker R Usage Example
 
 ```python
-# 示例：在 Docker 中执行 lavaan SEM
+# Example: Execute lavaan SEM in Docker
 r_code = '''
 library(lavaan)
 
-# 读取数据 (容器内路径)
+# Read data (container path)
 data <- read.csv("/workspace/data.csv")
 
-# SEM 模型
+# SEM model
 model <- '
   latent1 =~ x1 + x2 + x3
   latent2 =~ y1 + y2 + y3
@@ -642,35 +642,35 @@ model <- '
 
 fit <- sem(model, data = data)
 
-# 输出结果
+# Output results
 sink("/output/sem_results.txt")
 summary(fit, fit.measures = TRUE, standardized = TRUE)
 sink()
 
-cat("SEM 分析完成！结果保存到 /output/sem_results.txt\\n")
+cat("SEM analysis complete! Results saved to /output/sem_results.txt\\n")
 '''
 
-# 检测并执行
+# Check and execute
 docker_ok, msg = check_docker_r_available()
 if docker_ok:
     result = execute_r_in_docker(r_code, data_file="./data.csv")
     if result['success']:
-        print("✅ Docker R 执行成功")
+        print("Docker R execution successful")
         print(result['output'])
     else:
-        print(f"❌ 执行失败: {result['errors']}")
+        print(f"Execution failed: {result['errors']}")
 else:
-    print(f"⚠️ Docker 不可用 ({msg})，降级到输出 .R 文件")
-    # 调用 generate_r_script() ...
+    print(f"Warning: Docker not available ({msg}), falling back to .R file output")
+    # Call generate_r_script() ...
 ```
 
 ---
 
-### 输出 .R 文件 (降级方案)
+### Output .R File (Fallback Approach)
 
-当 Docker R 不可用时，生成独立的 .R 文件供用户在本地 RStudio 运行。
+When Docker R is not available, generate a standalone .R file for the user to run locally in RStudio.
 
-#### R 代码文件生成函数
+#### R Code File Generation Function
 
 ```python
 import os
@@ -679,17 +679,17 @@ from datetime import datetime
 def generate_r_script(analysis_name: str, r_code: str, data_file: str,
                       required_packages: list, output_dir: str = None):
     """
-    生成独立的 R 脚本文件供用户本地运行
+    Generate a standalone R script file for local execution
 
     Args:
-        analysis_name: 分析名称 (用于文件命名)
-        r_code: R 分析代码主体
-        data_file: 数据文件路径
-        required_packages: 所需 R 包列表
-        output_dir: 输出目录
+        analysis_name: Analysis name (used for file naming)
+        r_code: Main R analysis code body
+        data_file: Data file path
+        required_packages: List of required R packages
+        output_dir: Output directory
 
     Returns:
-        str: 生成的 .R 文件路径
+        str: Path to the generated .R file
     """
     if output_dir is None:
         output_dir = os.environ.get('OUTPUT_DIR', './outputs')
@@ -700,11 +700,11 @@ def generate_r_script(analysis_name: str, r_code: str, data_file: str,
 
     r_script = f'''# ============================================================
 # {analysis_name}
-# 生成时间: {timestamp}
-# 数据文件: {data_file}
+# Generated at: {timestamp}
+# Data file: {data_file}
 # ============================================================
 
-# 1. 环境准备 - 自动安装缺失的包
+# 1. Environment Setup - Automatically install missing packages
 required_packages <- c({packages_str})
 for (pkg in required_packages) {{
   if (!require(pkg, character.only = TRUE, quietly = TRUE)) {{
@@ -713,22 +713,22 @@ for (pkg in required_packages) {{
   }}
 }}
 
-# 2. 设置工作目录和输出路径
+# 2. Set working directory and output path
 output_dir <- "{output_dir}"
 if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
 
-# 3. 读取数据
-data <- read.csv("{data_file}")  # 或使用 readxl::read_excel()
-cat("数据维度:", nrow(data), "行 x", ncol(data), "列\\n")
+# 3. Read data
+data <- read.csv("{data_file}")  # Or use readxl::read_excel()
+cat("Data dimensions:", nrow(data), "rows x", ncol(data), "columns\\n")
 
-# 4. 分析代码
+# 4. Analysis code
 {r_code}
 
-# 5. 完成提示
-cat("\\n分析完成！结果已保存到:", output_dir, "\\n")
+# 5. Completion message
+cat("\\nAnalysis complete! Results saved to:", output_dir, "\\n")
 '''
 
-    # 保存 R 脚本
+    # Save R script
     script_path = os.path.join(output_dir, f'{analysis_name}.R')
     with open(script_path, 'w', encoding='utf-8') as f:
         f.write(r_script)
@@ -736,244 +736,244 @@ cat("\\n分析完成！结果已保存到:", output_dir, "\\n")
     return script_path
 ```
 
-### Common R Packages (参考)
+### Common R Packages (Reference)
 
-| 分析类型 | R 包 | 用途 | Python 替代 |
-|----------|------|------|-------------|
-| SEM | lavaan | 结构方程模型 | semopy (基础) |
-| HLM | lme4, nlme | 混合效应模型 | statsmodels (2层) |
-| 贝叶斯 | brms, rstanarm | 贝叶斯回归 | PyMC |
-| 元分析 | metafor, meta | Meta-analysis | pymare (基础) |
-| IRT | mirt, ltm | 项目反应理论 | girth (有限) |
-| 生存 | survival, survminer | 生存分析 | lifelines |
-| 可视化 | ggplot2 | 高级绑图 | matplotlib/seaborn |
+| Analysis Type | R Package | Purpose | Python Alternative |
+|---------------|-----------|---------|-------------------|
+| SEM | lavaan | Structural equation modeling | semopy (basic) |
+| HLM | lme4, nlme | Mixed effects models | statsmodels (2-level) |
+| Bayesian | brms, rstanarm | Bayesian regression | PyMC |
+| Meta-analysis | metafor, meta | Meta-analysis | pymare (basic) |
+| IRT | mirt, ltm | Item response theory | girth (limited) |
+| Survival | survival, survminer | Survival analysis | lifelines |
+| Visualization | ggplot2 | Advanced plotting | matplotlib/seaborn |
 
-### SEM with lavaan (R 代码模板)
+### SEM with lavaan (R Code Template)
 
 ```python
-# 当需要复杂 SEM (多组比较、测量不变性等) 时使用
+# Use when complex SEM is needed (multi-group comparison, measurement invariance, etc.)
 r_code = '''
 library(lavaan)
 
-# 定义模型
+# Define model
 model <- '
-  # 测量模型
+  # Measurement model
   latent1 =~ x1 + x2 + x3
   latent2 =~ y1 + y2 + y3
 
-  # 结构模型
+  # Structural model
   latent2 ~ latent1
 '
 
-# 拟合模型
+# Fit model
 fit <- sem(model, data = data)
 
-# 结果汇总
+# Results summary
 summary(fit, fit.measures = TRUE, standardized = TRUE)
 
-# 拟合指数
+# Fit indices
 fit_indices <- fitMeasures(fit, c("chisq", "df", "pvalue", "cfi", "tli", "rmsea", "srmr"))
 print(round(fit_indices, 3))
 
-# 保存结果
+# Save results
 sink(file.path(output_dir, "SEM_results.txt"))
 summary(fit, fit.measures = TRUE, standardized = TRUE)
 sink()
 
-cat("SEM 结果已保存到 SEM_results.txt\\n")
+cat("SEM results saved to SEM_results.txt\\n")
 '''
 
 script_path = generate_r_script(
-    analysis_name="SEM_lavaan分析",
+    analysis_name="SEM_lavaan_analysis",
     r_code=r_code,
     data_file="data.csv",
     required_packages=["lavaan", "tidyverse"]
 )
-print(f"R 脚本已生成: {script_path}")
+print(f"R script generated: {script_path}")
 ```
 
-### HLM with lme4 (R 代码模板)
+### HLM with lme4 (R Code Template)
 
 ```python
-# 当需要 3+ 水平 HLM 或复杂随机效应时使用
+# Use when 3+ level HLM or complex random effects are needed
 r_code = '''
 library(lme4)
-library(lmerTest)  # 提供 p 值
+library(lmerTest)  # Provides p-values
 
-# 零模型 (计算 ICC)
+# Null model (compute ICC)
 model0 <- lmer(y ~ 1 + (1|group), data = data)
 summary(model0)
 
-# 计算 ICC
+# Compute ICC
 var_comp <- as.data.frame(VarCorr(model0))
 icc <- var_comp$vcov[1] / sum(var_comp$vcov)
 cat("ICC =", round(icc, 3), "\\n")
 
-# 随机截距模型
+# Random intercept model
 model1 <- lmer(y ~ x1 + x2 + (1|group), data = data)
 summary(model1)
 
-# 随机截距和斜率模型
+# Random intercept and slope model
 model2 <- lmer(y ~ x1 + x2 + (1 + x1|group), data = data)
 summary(model2)
 
-# 模型比较
+# Model comparison
 anova(model1, model2)
 
-# 保存结果
+# Save results
 sink(file.path(output_dir, "HLM_results.txt"))
-cat("=== 零模型 ===\\n")
+cat("=== Null Model ===\\n")
 summary(model0)
 cat("\\nICC =", round(icc, 3), "\\n")
-cat("\\n=== 随机截距模型 ===\\n")
+cat("\\n=== Random Intercept Model ===\\n")
 summary(model1)
-cat("\\n=== 随机斜率模型 ===\\n")
+cat("\\n=== Random Slope Model ===\\n")
 summary(model2)
-cat("\\n=== 模型比较 ===\\n")
+cat("\\n=== Model Comparison ===\\n")
 print(anova(model1, model2))
 sink()
 
-cat("HLM 结果已保存到 HLM_results.txt\\n")
+cat("HLM results saved to HLM_results.txt\\n")
 '''
 
 script_path = generate_r_script(
-    analysis_name="HLM_lme4分析",
+    analysis_name="HLM_lme4_analysis",
     r_code=r_code,
     data_file="data.csv",
     required_packages=["lme4", "lmerTest", "tidyverse"]
 )
 ```
 
-### Meta-Analysis with metafor (R 代码模板)
+### Meta-Analysis with metafor (R Code Template)
 
 ```python
-# 复杂元分析 (调节效应、网络元分析等) 时使用
+# Use for complex meta-analysis (moderator effects, network meta-analysis, etc.)
 r_code = '''
 library(metafor)
 
-# 假设数据包含: yi (效应量), vi (方差), moderator (调节变量)
+# Assume data contains: yi (effect size), vi (variance), moderator (moderator variable)
 
-# 随机效应模型
+# Random effects model
 res <- rma(yi = yi, vi = vi, data = data, method = "REML")
 summary(res)
 
-# 异质性检验
-cat("\\n=== 异质性检验 ===\\n")
+# Heterogeneity test
+cat("\\n=== Heterogeneity Test ===\\n")
 cat("Q =", round(res$QE, 2), ", df =", res$k - 1, ", p =", format.pval(res$QEp), "\\n")
-cat("I² =", round(res$I2, 1), "%\\n")
-cat("τ² =", round(res$tau2, 4), "\\n")
+cat("I-squared =", round(res$I2, 1), "%\\n")
+cat("tau-squared =", round(res$tau2, 4), "\\n")
 
-# 发表偏倚检验
-cat("\\n=== 发表偏倚检验 ===\\n")
+# Publication bias test
+cat("\\n=== Publication Bias Test ===\\n")
 regtest(res)
 
-# 森林图
+# Forest plot
 png(file.path(output_dir, "forest_plot.png"), width = 800, height = 600)
 forest(res, slab = paste("Study", 1:nrow(data)))
 dev.off()
 
-# 漏斗图
+# Funnel plot
 png(file.path(output_dir, "funnel_plot.png"), width = 600, height = 600)
 funnel(res)
 dev.off()
 
-# 调节效应分析 (如果有调节变量)
+# Moderator analysis (if moderator variable exists)
 if ("moderator" %in% names(data)) {
   res_mod <- rma(yi = yi, vi = vi, mods = ~ moderator, data = data)
   summary(res_mod)
 }
 
-# 保存结果
+# Save results
 sink(file.path(output_dir, "meta_analysis_results.txt"))
 summary(res)
-cat("\\n=== 发表偏倚检验 ===\\n")
+cat("\\n=== Publication Bias Test ===\\n")
 regtest(res)
 sink()
 
-cat("元分析结果已保存\\n")
+cat("Meta-analysis results saved\\n")
 '''
 
 script_path = generate_r_script(
-    analysis_name="元分析_metafor",
+    analysis_name="meta_analysis_metafor",
     r_code=r_code,
     data_file="meta_data.csv",
     required_packages=["metafor", "tidyverse"]
 )
 ```
 
-### IRT with mirt (R 代码模板)
+### IRT with mirt (R Code Template)
 
 ```python
-# IRT 分析 (2PL, 3PL, GRM 等) 时使用
+# Use for IRT analysis (2PL, 3PL, GRM, etc.)
 r_code = '''
 library(mirt)
 
-# 假设数据只包含作答矩阵 (0/1 或多类别)
-items <- data[, grep("^item|^q", names(data))]  # 选择题目列
+# Assume data contains only the response matrix (0/1 or polytomous)
+items <- data[, grep("^item|^q", names(data))]  # Select item columns
 
-# 2PL 模型
+# 2PL model
 mod_2pl <- mirt(items, 1, itemtype = "2PL", verbose = FALSE)
 
-# 模型拟合
+# Model fit
 M2(mod_2pl)
 
-# 题目参数
-cat("=== 题目参数 ===\\n")
+# Item parameters
+cat("=== Item Parameters ===\\n")
 coef(mod_2pl, simplify = TRUE, IRTpars = TRUE)$items
 
-# 模型拟合指数
-cat("\\n=== 模型拟合 ===\\n")
+# Model fit indices
+cat("\\n=== Model Fit ===\\n")
 M2(mod_2pl)
 
-# 项目特征曲线
+# Item characteristic curves
 png(file.path(output_dir, "ICC_plots.png"), width = 1000, height = 800)
 plot(mod_2pl, type = "trace", facet_items = TRUE)
 dev.off()
 
-# 测验信息函数
+# Test information function
 png(file.path(output_dir, "test_information.png"), width = 800, height = 600)
 plot(mod_2pl, type = "info")
 dev.off()
 
-# 估计能力值
+# Estimate ability scores
 theta <- fscores(mod_2pl, method = "MAP")
 data$theta <- theta[,1]
 
-# 保存结果
+# Save results
 sink(file.path(output_dir, "IRT_results.txt"))
-cat("=== 2PL IRT 分析结果 ===\\n\\n")
-cat("=== 题目参数 ===\\n")
+cat("=== 2PL IRT Analysis Results ===\\n\\n")
+cat("=== Item Parameters ===\\n")
 print(coef(mod_2pl, simplify = TRUE, IRTpars = TRUE)$items)
-cat("\\n=== 模型拟合 ===\\n")
+cat("\\n=== Model Fit ===\\n")
 print(M2(mod_2pl))
 sink()
 
 write.csv(data, file.path(output_dir, "data_with_theta.csv"), row.names = FALSE)
-cat("IRT 分析完成，能力估计值已添加到数据\\n")
+cat("IRT analysis complete, ability estimates added to data\\n")
 '''
 
 script_path = generate_r_script(
-    analysis_name="IRT_mirt分析",
+    analysis_name="IRT_mirt_analysis",
     r_code=r_code,
     data_file="item_responses.csv",
     required_packages=["mirt", "tidyverse"]
 )
 ```
 
-### RI-CLPM (随机截距交叉滞后面板模型)
+### RI-CLPM (Random Intercept Cross-Lagged Panel Model)
 
 ```python
-# RI-CLPM 是典型的需要 R lavaan 的复杂模型
+# RI-CLPM is a typical complex model that requires R lavaan
 r_code = '''
 library(lavaan)
 
-# RI-CLPM 模型语法 (3 波数据示例)
+# RI-CLPM model syntax (3-wave data example)
 ri_clpm_model <- '
-  # 随机截距 (trait-like 成分)
+  # Random intercepts (trait-like component)
   RI_X =~ 1*X1 + 1*X2 + 1*X3
   RI_Y =~ 1*Y1 + 1*Y2 + 1*Y3
 
-  # 结构化残差 (state-like 成分)
+  # Structured residuals (state-like component)
   WX1 =~ 1*X1
   WX2 =~ 1*X2
   WX3 =~ 1*X3
@@ -981,25 +981,25 @@ ri_clpm_model <- '
   WY2 =~ 1*Y2
   WY3 =~ 1*Y3
 
-  # 自回归路径
+  # Autoregressive paths
   WX2 ~ a*WX1
   WX3 ~ a*WX2
   WY2 ~ b*WY1
   WY3 ~ b*WY2
 
-  # 交叉滞后路径
+  # Cross-lagged paths
   WY2 ~ c*WX1
   WY3 ~ c*WX2
   WX2 ~ d*WY1
   WX3 ~ d*WY2
 
-  # 协方差
+  # Covariances
   WX1 ~~ WY1
   WX2 ~~ WY2
   WX3 ~~ WY3
   RI_X ~~ RI_Y
 
-  # 残差方差约束为相等
+  # Residual variances constrained to be equal
   X1 ~~ e*X1
   X2 ~~ e*X2
   X3 ~~ e*X3
@@ -1008,62 +1008,62 @@ ri_clpm_model <- '
   Y3 ~~ f*Y3
 '
 
-# 拟合模型
+# Fit model
 fit <- sem(ri_clpm_model, data = data, missing = "FIML")
 
-# 结果
+# Results
 summary(fit, fit.measures = TRUE, standardized = TRUE)
 
-# 保存
+# Save
 sink(file.path(output_dir, "RI_CLPM_results.txt"))
 summary(fit, fit.measures = TRUE, standardized = TRUE)
 sink()
 
-cat("RI-CLPM 结果已保存\\n")
+cat("RI-CLPM results saved\\n")
 '''
 
 script_path = generate_r_script(
-    analysis_name="RI_CLPM分析",
+    analysis_name="RI_CLPM_analysis",
     r_code=r_code,
     data_file="panel_data.csv",
     required_packages=["lavaan"]
 )
 ```
 
-### 用户提示模板 (配合 R 代码输出)
+### User Instructions Template (For R Code Output)
 
-当生成 R 代码文件后，向用户展示：
+When an R code file is generated, display the following to the user:
 
 ```python
 def show_r_code_instructions(script_path: str, analysis_name: str, packages: list):
-    """生成用户指引信息"""
+    """Generate user instruction message"""
     packages_install = ', '.join([f'"{p}"' for p in packages])
 
     instructions = f'''
-## ⚠️ 此分析需要 R 环境
+## Warning: This Analysis Requires an R Environment
 
-当前请求的分析（{analysis_name}）超出 Python 库的覆盖能力，已为您生成 R 代码。
+The requested analysis ({analysis_name}) exceeds the capabilities of Python libraries. An R script has been generated for you.
 
-### 运行方式
+### How to Run
 
-**方式一：RStudio (推荐)**
-1. 打开 RStudio
-2. 打开文件：`{script_path}`
-3. 点击 "Source" 或 Ctrl+Shift+Enter 运行全部
+**Option 1: RStudio (Recommended)**
+1. Open RStudio
+2. Open file: `{script_path}`
+3. Click "Source" or press Ctrl+Shift+Enter to run all
 
-**方式二：命令行**
+**Option 2: Command Line**
 ```bash
 Rscript "{script_path}"
 ```
 
-### 首次运行需安装 R 包
+### First-time Setup: Install Required R Packages
 ```r
 install.packages(c({packages_install}))
 ```
 
-### 生成的文件
-- `{os.path.basename(script_path)}` - R 分析脚本
-- 运行后将生成结果文件到同一目录
+### Generated Files
+- `{os.path.basename(script_path)}` - R analysis script
+- After running, result files will be generated in the same directory
 '''
     return instructions
 ```

@@ -1,23 +1,23 @@
 # ============================================================
-# 元分析示例
+# Meta-Analysis Example
 #
-# 运行: ./r-stat.sh run examples/meta_example.R
-# 经典图表: 森林图、漏斗图 (自动输出)
+# Run: ./r-stat.sh run examples/meta_example.R
+# Classic charts: Forest plot, funnel plot (auto output)
 # ============================================================
 
 library(metafor)
 library(tidyverse)
 
-cat("=== 元分析 ===\n\n")
+cat("=== Meta-Analysis ===\n\n")
 
-# 使用内置数据集
+# Use built-in dataset
 data("dat.bcg", package = "metafor")
 df <- dat.bcg
 
-cat(sprintf("研究数量: k = %d\n", nrow(df)))
+cat(sprintf("Number of studies: k = %d\n", nrow(df)))
 
 # ============================================================
-# 1. 效应量计算
+# 1. Effect Size Calculation
 # ============================================================
 
 df <- escalc(measure = "RR",
@@ -26,45 +26,45 @@ df <- escalc(measure = "RR",
              data = df)
 
 # ============================================================
-# 2. 随机效应模型
+# 2. Random-Effects Model
 # ============================================================
 
 res <- rma(yi, vi, data = df, method = "REML")
 
-cat("\n【整体效应】\n")
+cat("\n[Overall Effect]\n")
 cat(sprintf("  RR = %.3f [95%% CI: %.3f, %.3f]\n",
             exp(res$beta), exp(res$ci.lb), exp(res$ci.ub)))
 cat(sprintf("  z = %.2f, p = %.4f\n", res$zval, res$pval))
 
-cat("\n【异质性】\n")
+cat("\n[Heterogeneity]\n")
 cat(sprintf("  Q(%d) = %.2f, p = %.4f\n", res$k - 1, res$QE, res$QEp))
-cat(sprintf("  I² = %.1f%%\n", res$I2))
-cat(sprintf("  τ² = %.4f\n", res$tau2))
+cat(sprintf("  I^2 = %.1f%%\n", res$I2))
+cat(sprintf("  tau^2 = %.4f\n", res$tau2))
 
 # ============================================================
-# 3. 发表偏倚
+# 3. Publication Bias
 # ============================================================
 
-cat("\n【发表偏倚检验】\n")
+cat("\n[Publication Bias Tests]\n")
 egger <- regtest(res)
 cat(sprintf("  Egger's test: z = %.2f, p = %.3f\n", egger$zval, egger$pval))
 
 taf <- trimfill(res)
 if (taf$k0 > 0) {
-  cat(sprintf("  Trim-and-Fill: 估计缺失 %d 篇\n", taf$k0))
-  cat(sprintf("  校正后 RR = %.3f [%.3f, %.3f]\n",
+  cat(sprintf("  Trim-and-Fill: estimated %d missing studies\n", taf$k0))
+  cat(sprintf("  Adjusted RR = %.3f [%.3f, %.3f]\n",
               exp(taf$beta), exp(taf$ci.lb), exp(taf$ci.ub)))
 } else {
-  cat("  Trim-and-Fill: 未检测到缺失研究\n")
+  cat("  Trim-and-Fill: no missing studies detected\n")
 }
 
 # ============================================================
-# 4. 经典图表输出
+# 4. Classic Chart Output
 # ============================================================
 
-cat("\n【图表输出】\n")
+cat("\n[Chart Output]\n")
 
-# 森林图
+# Forest plot
 pdf("forest_plot.pdf", width = 12, height = 8)
 forest(res,
        slab = paste0(df$author, " (", df$year, ")"),
@@ -76,10 +76,10 @@ forest(res,
 dev.off()
 cat("  ✓ forest_plot.pdf\n")
 
-# 漏斗图
+# Funnel plot
 pdf("funnel_plot.pdf", width = 8, height = 6)
 funnel(res, main = "Funnel Plot")
 dev.off()
 cat("  ✓ funnel_plot.pdf\n")
 
-cat("\n=== 完成 ===\n")
+cat("\n=== Complete ===\n")

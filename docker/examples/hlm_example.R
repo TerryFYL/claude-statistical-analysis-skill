@@ -1,8 +1,8 @@
 # ============================================================
-# 多层线性模型 (HLM) 示例
+# Hierarchical Linear Modeling (HLM) Example
 #
-# 运行: ./r-stat.sh run examples/hlm_example.R
-# 经典图表: 个体轨迹图、随机效应图 (自动输出)
+# Run: ./r-stat.sh run examples/hlm_example.R
+# Classic charts: Individual trajectory plot, random effects plot (auto output)
 # ============================================================
 
 library(lme4)
@@ -10,54 +10,54 @@ library(lmerTest)
 library(performance)
 library(tidyverse)
 
-cat("=== 多层线性模型分析 ===\n\n")
+cat("=== Hierarchical Linear Modeling Analysis ===\n\n")
 
-# 使用内置数据集
+# Use built-in dataset
 data("sleepstudy", package = "lme4")
 df <- sleepstudy
 
-cat(sprintf("观测数: N = %d, 被试数: %d\n", nrow(df), length(unique(df$Subject))))
+cat(sprintf("Observations: N = %d, Subjects: %d\n", nrow(df), length(unique(df$Subject))))
 
 # ============================================================
-# 1. 零模型 - ICC
+# 1. Null Model - ICC
 # ============================================================
 
 model_null <- lmer(Reaction ~ 1 + (1|Subject), data = df)
 icc_val <- icc(model_null)
 
-cat("\n【ICC】\n")
-cat(sprintf("  ICC = %.3f (%.1f%% 方差来自个体间差异)\n",
+cat("\n[ICC]\n")
+cat(sprintf("  ICC = %.3f (%.1f%% of variance is between-subject)\n",
             icc_val$ICC_adjusted, icc_val$ICC_adjusted * 100))
 
 # ============================================================
-# 2. 随机斜率模型
+# 2. Random Slope Model
 # ============================================================
 
 model <- lmer(Reaction ~ Days + (1 + Days|Subject), data = df)
 
-cat("\n【固定效应】\n")
+cat("\n[Fixed Effects]\n")
 fe <- fixef(model)
 se <- sqrt(diag(vcov(model)))
 summ <- summary(model)$coefficients
-cat(sprintf("  截距: B = %.2f, SE = %.2f, t = %.2f, p < .001\n",
+cat(sprintf("  Intercept: B = %.2f, SE = %.2f, t = %.2f, p < .001\n",
             fe[1], se[1], summ[1, "t value"]))
 cat(sprintf("  Days: B = %.2f, SE = %.2f, t = %.2f, p < .001\n",
             fe[2], se[2], summ[2, "t value"]))
 
-cat("\n【随机效应】\n")
+cat("\n[Random Effects]\n")
 vc <- VarCorr(model)$Subject
-cat(sprintf("  截距方差 τ₀₀ = %.2f\n", vc[1,1]))
-cat(sprintf("  斜率方差 τ₁₁ = %.2f\n", vc[2,2]))
-cat(sprintf("  相关 r = %.2f\n", attr(vc, "correlation")[1,2]))
-cat(sprintf("  残差方差 σ² = %.2f\n", sigma(model)^2))
+cat(sprintf("  Intercept variance tau_00 = %.2f\n", vc[1,1]))
+cat(sprintf("  Slope variance tau_11 = %.2f\n", vc[2,2]))
+cat(sprintf("  Correlation r = %.2f\n", attr(vc, "correlation")[1,2]))
+cat(sprintf("  Residual variance sigma^2 = %.2f\n", sigma(model)^2))
 
 # ============================================================
-# 3. 经典图表输出
+# 3. Classic Chart Output
 # ============================================================
 
-cat("\n【图表输出】\n")
+cat("\n[Chart Output]\n")
 
-# 图1: 个体轨迹图
+# Figure 1: Individual trajectory plot
 pdf("individual_trajectories.pdf", width = 10, height = 8)
 df$predicted <- predict(model)
 ggplot(df, aes(x = Days, y = Reaction, group = Subject)) +
@@ -71,7 +71,7 @@ ggplot(df, aes(x = Days, y = Reaction, group = Subject)) +
 dev.off()
 cat("  ✓ individual_trajectories.pdf\n")
 
-# 图2: 随机效应图
+# Figure 2: Random effects plot
 pdf("random_effects.pdf", width = 10, height = 8)
 re <- ranef(model)$Subject
 re$Subject <- rownames(re)
@@ -90,4 +90,4 @@ ggplot(re_long, aes(x = reorder(Subject, Value), y = Value)) +
 dev.off()
 cat("  ✓ random_effects.pdf\n")
 
-cat("\n=== 完成 ===\n")
+cat("\n=== Complete ===\n")

@@ -1,111 +1,111 @@
-# 完整路径工作流程
+# Full Path Workflow
 
-**适用**: SEM/CFA、HLM、IRT、元分析、RI-CLPM 等复杂分析
-
----
-
-## 流程概览
-
-```
-阶段1: 数据清洗方案 → ⏸️确认
-         ↓
-阶段2: 执行清洗 → ⏸️确认
-         ↓
-阶段3: 分析方案 → ⏸️确认
-         ↓
-阶段4: 执行分析 → 输出结果
-```
+**Applicable to**: SEM/CFA, HLM, IRT, Meta-analysis, RI-CLPM, and other complex analyses
 
 ---
 
-## 阶段1: 数据清洗方案
+## Workflow Overview
 
-### 输出模板
+```
+Phase 1: Data Cleaning Plan -> Pause for Confirmation
+         |
+Phase 2: Execute Cleaning -> Pause for Confirmation
+         |
+Phase 3: Analysis Plan -> Pause for Confirmation
+         |
+Phase 4: Execute Analysis -> Output Results
+```
+
+---
+
+## Phase 1: Data Cleaning Plan
+
+### Output Template
 
 ```markdown
-## 数据概况
-- 样本量: N = 3248
-- 变量数: 15
+## Data Overview
+- Sample size: N = 3248
+- Number of variables: 15
 
-## 清洗方案
+## Cleaning Plan
 
-### 缺失值处理
-| 变量 | 缺失数 | 缺失% | 处理方式 |
-|------|--------|-------|----------|
-| 变量A | 50 | 5% | 删除 |
-| 变量B | 300 | 30% | 均值填补 |
+### Missing Value Treatment
+| Variable | Missing Count | Missing % | Treatment |
+|----------|---------------|-----------|-----------|
+| Variable A | 50 | 5% | Deletion |
+| Variable B | 300 | 30% | Mean imputation |
 
-### 异常值处理
-| 变量 | 异常数 | 处理方式 |
-|------|--------|----------|
-| 年龄 | 5 | 保留 |
+### Outlier Treatment
+| Variable | Outlier Count | Treatment |
+|----------|---------------|-----------|
+| Age | 5 | Retain |
 
-### 预计结果
-- 预计最终样本量: N = 3005
-- 保留率: 92.5%
+### Expected Results
+- Expected final sample size: N = 3005
+- Retention rate: 92.5%
 
 ---
-⏸️ 请确认清洗方案
+Pause: Please confirm the cleaning plan
 ```
 
 ---
 
-## 阶段2: 执行清洗
+## Phase 2: Execute Cleaning
 
-### 输出模板
+### Output Template
 
 ```markdown
-## 清洗结果
-- 原始: 3248 → 最终: 3005
-- 保留率: 92.5%
+## Cleaning Results
+- Original: 3248 -> Final: 3005
+- Retention rate: 92.5%
 
-## 处理详情
-1. 缺失值删除: 243例
-2. 异常值处理: 0例删除
+## Processing Details
+1. Missing value deletion: 243 cases
+2. Outlier treatment: 0 cases deleted
 
-## 输出文件
-- 数据_清洗后.xlsx
+## Output Files
+- data_cleaned.xlsx
 
 ---
-⏸️ 请确认清洗结果
+Pause: Please confirm the cleaning results
 ```
 
 ---
 
-## 阶段3: 分析方案
+## Phase 3: Analysis Plan
 
-### 输出模板
+### Output Template
 
 ```markdown
-## 变量角色
-| 角色 | 变量 | 说明 |
-|------|------|------|
-| 潜变量1 | visual | x1, x2, x3 |
-| 潜变量2 | textual | x4, x5, x6 |
-| 结构路径 | visual → textual | 假设关系 |
+## Variable Roles
+| Role | Variable | Description |
+|------|----------|-------------|
+| Latent Variable 1 | visual | x1, x2, x3 |
+| Latent Variable 2 | textual | x4, x5, x6 |
+| Structural Path | visual -> textual | Hypothesized relationship |
 
-## 分析计划
-| 序号 | 内容 | 方法 | 输出 |
-|------|------|------|------|
-| 1 | CFA | lavaan | 路径图、拟合指标 |
-| 2 | SEM | lavaan | 路径系数、模型比较 |
+## Analysis Plan
+| No. | Content | Method | Output |
+|-----|---------|--------|--------|
+| 1 | CFA | lavaan | Path diagram, fit indices |
+| 2 | SEM | lavaan | Path coefficients, model comparison |
 
-## 输出规范
-- 图表语言: 中文/英文？
-- 表格格式: APA 7
+## Output Specifications
+- Chart language: Chinese/English?
+- Table format: APA 7
 
 ---
-⏸️ 请确认分析方案
+Pause: Please confirm the analysis plan
 ```
 
 ---
 
-## 阶段4: 执行分析
+## Phase 4: Execute Analysis
 
-### R 代码执行
+### R Code Execution
 
 ```bash
-# 写入脚本
+# Write script
 cat > analysis.R << 'EOF'
 library(lavaan)
 library(semPlot)
@@ -120,43 +120,43 @@ model <- '
 
 fit <- sem(model, data = data)
 
-# 输出拟合指标
-cat("\n【模型拟合】\n")
+# Output fit indices
+cat("\n[Model Fit]\n")
 fitmeasures(fit, c("cfi", "tli", "rmsea", "srmr"))
 
-# 输出路径系数
-cat("\n【路径系数】\n")
+# Output path coefficients
+cat("\n[Path Coefficients]\n")
 parameterEstimates(fit, standardized = TRUE)
 
-# 保存路径图
+# Save path diagram
 pdf("path_diagram.pdf", width = 10, height = 8)
 semPaths(fit, what = "std", layout = "tree2")
 dev.off()
 EOF
 
-# 执行
+# Execute
 docker run --rm -v "$(pwd)":/workspace -w /workspace r-statistical:1.0 Rscript analysis.R
 ```
 
-### 输出清单
+### Output Checklist
 
-分析完成后必须输出：
-- [ ] 结果表格 (.xlsx)
-- [ ] 图表 (.pdf)
-- [ ] 简要解读
+The following must be produced after analysis is complete:
+- [ ] Results table (.xlsx)
+- [ ] Charts (.pdf)
+- [ ] Brief interpretation
 
 ---
 
-## 变更处理
+## Handling Changes
 
-如果用户在后续阶段提出变更：
+If the user requests changes in a later phase:
 
 ```markdown
-## ⚠️ 需求变更
+## Warning: Requirement Change
 
-| 项目 | 原内容 | 新内容 |
-|------|--------|--------|
-| [项目] | [原] | [新] |
+| Item | Original | New |
+|------|----------|-----|
+| [Item] | [Original] | [New] |
 
-是否按新需求执行？
+Proceed with the new requirements?
 ```

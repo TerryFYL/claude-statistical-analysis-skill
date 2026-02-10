@@ -1,79 +1,79 @@
-# 统计分析报告
+# Statistical Analysis Report
 
-## 一、数据概况
+## 1. Data Overview
 
-### 1.1 样本信息
+### 1.1 Sample Information
 
-- 原始样本量：N = [填写]
-- 有效样本量：N = [填写]
-- 数据来源：[填写]
+- Original sample size: N = [fill in]
+- Valid sample size: N = [fill in]
+- Data source: [fill in]
 
-### 1.2 数据处理
+### 1.2 Data Processing
 
-- 缺失值：[处理方式]
-- 异常值：[处理方式]
-
----
-
-## 二、描述统计
-
-### 2.1 连续变量
-
-[插入表1]
-
-### 2.2 分类变量
-
-[插入表2]
+- Missing values: [processing method]
+- Outliers: [processing method]
 
 ---
 
-## 三、相关分析
+## 2. Descriptive Statistics
 
-[插入表3]
+### 2.1 Continuous Variables
 
-[插入图1：相关热力图]
+[Insert Table 1]
 
-**结果摘要**：[文字描述主要发现]
+### 2.2 Categorical Variables
 
----
-
-## 四、[分析名称]
-
-### 4.1 分析方法
-
-[描述方法]
-
-### 4.2 结果
-
-[插入表格]
-
-[插入图表（如有）]
-
-### 4.3 解读
-
-[结果解读]
+[Insert Table 2]
 
 ---
 
-## 五、[分析名称]
+## 3. Correlation Analysis
 
-[同上结构]
+[Insert Table 3]
+
+[Insert Figure 1: Correlation heatmap]
+
+**Summary of results**: [Text describing main findings]
 
 ---
 
-## 附注
+## 4. [Analysis Name]
 
-### 统计方法
+### 4.1 Method
 
-- 软件：Python (pandas, scipy, statsmodels)
-- 显著性水平：α = .05
+[Describe method]
 
-### 符号说明
+### 4.2 Results
 
-- M = 均值，SD = 标准差
-- B = 非标准化系数，β = 标准化系数
+[Insert table]
+
+[Insert figure (if applicable)]
+
+### 4.3 Interpretation
+
+[Interpretation of results]
+
+---
+
+## 5. [Analysis Name]
+
+[Same structure as above]
+
+---
+
+## Notes
+
+### Statistical Methods
+
+- Software: Python (pandas, scipy, statsmodels)
+- Significance level: alpha = .05
+
+### Symbol Legend
+
+- M = mean, SD = standard deviation
+- B = unstandardized coefficient, beta = standardized coefficient
 - *p < .05, **p < .01, ***p < .001
 
 ---
 
-*报告生成时间：[日期]*
+*Report generated on: [date]*

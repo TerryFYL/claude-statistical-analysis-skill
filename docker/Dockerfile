@@ -2,7 +2,7 @@
 # Statistical Analysis R Environment
 #
 # Base: rocker/tidyverse:4.3
-# Purpose: 社会科学/心理学统计分析专用环境
+# Purpose: Specialized environment for social science/psychology statistical analysis
 # Includes: lavaan, lme4, metafor, mirt, psych, and more
 # ============================================================
 
@@ -13,65 +13,65 @@ LABEL description="R environment for advanced statistical analysis (SEM, HLM, IR
 LABEL version="1.0"
 
 # ============================================================
-# 1. 系统依赖
+# 1. System Dependencies
 # ============================================================
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    # 中文字体支持
+    # Chinese font support
     fonts-noto-cjk \
     fonts-wqy-microhei \
-    # LaTeX 支持 (用于高质量图表导出)
+    # LaTeX support (for high-quality chart export)
     texlive-latex-base \
     texlive-fonts-recommended \
     texlive-fonts-extra \
     texlive-xetex \
-    # 图形库依赖
+    # Graphics library dependencies
     libglpk-dev \
-    # 系统工具
+    # System tools
     curl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# 刷新字体缓存
+# Refresh font cache
 RUN fc-cache -fv
 
 # ============================================================
-# 2. R 包安装 - 核心统计分析
+# 2. R Package Installation - Core Statistical Analysis
 # ============================================================
 RUN install2.r --error --skipinstalled --ncpus -1 \
-    # === 结构方程模型 (SEM) ===
+    # === Structural Equation Modeling (SEM) ===
     lavaan \
     semPlot \
     semTools \
-    # === 多层线性模型 (HLM) ===
+    # === Hierarchical Linear Modeling (HLM) ===
     lme4 \
     lmerTest \
     nlme \
-    # === 元分析 ===
+    # === Meta-Analysis ===
     metafor \
     meta \
-    # === 项目反应理论 (IRT) ===
+    # === Item Response Theory (IRT) ===
     mirt \
     ltm \
-    # === 心理测量学 ===
+    # === Psychometrics ===
     psych \
     GPArotation \
     nFactors \
-    # === 效应量与报告 ===
+    # === Effect Sizes & Reporting ===
     effectsize \
     parameters \
     performance \
     see \
     report \
-    # === 中介与调节分析 ===
+    # === Mediation & Moderation Analysis ===
     mediation \
     interactions \
-    # === 方差分析与事后检验 ===
+    # === ANOVA & Post-hoc Tests ===
     emmeans \
     afex \
-    # === 缺失数据处理 ===
+    # === Missing Data Handling ===
     mice \
     naniar \
-    # === 可视化增强 ===
+    # === Visualization Enhancement ===
     ggpubr \
     corrplot \
     ggcorrplot \
@@ -79,43 +79,43 @@ RUN install2.r --error --skipinstalled --ncpus -1 \
     && rm -rf /tmp/downloaded_packages/
 
 # ============================================================
-# 3. R 包安装 - 数据处理与工具
+# 3. R Package Installation - Data Processing & Tools
 # ============================================================
 RUN install2.r --error --skipinstalled --ncpus -1 \
-    # === 数据导入 ===
+    # === Data Import ===
     haven \
     readxl \
     writexl \
     openxlsx \
     foreign \
-    # === 数据处理 ===
+    # === Data Processing ===
     data.table \
     janitor \
-    # === 表格输出 ===
+    # === Table Output ===
     gt \
     flextable \
     kableExtra \
     stargazer \
-    # === 工具函数 ===
+    # === Utility Functions ===
     broom \
     broom.mixed \
     insight \
     && rm -rf /tmp/downloaded_packages/
 
 # ============================================================
-# 4. 创建工作目录
+# 4. Create Working Directory
 # ============================================================
 WORKDIR /workspace
 
 # ============================================================
-# 5. R 环境配置
+# 5. R Environment Configuration
 # ============================================================
 RUN echo 'options(repos = c(CRAN = "https://cloud.r-project.org"))' >> /usr/local/lib/R/etc/Rprofile.site \
     && echo 'options(warn = 1)' >> /usr/local/lib/R/etc/Rprofile.site \
     && echo 'Sys.setlocale("LC_ALL", "C.UTF-8")' >> /usr/local/lib/R/etc/Rprofile.site
 
 # ============================================================
-# 6. 验证安装
+# 6. Verify Installation
 # ============================================================
 RUN Rscript -e 'cat("=== Installed Packages ===\n"); \
     core_pkgs <- c("lavaan", "lme4", "metafor", "mirt", "psych", "tidyverse"); \
@@ -127,5 +127,5 @@ RUN Rscript -e 'cat("=== Installed Packages ===\n"); \
         } \
     }'
 
-# 默认命令
+# Default command
 CMD ["R"]

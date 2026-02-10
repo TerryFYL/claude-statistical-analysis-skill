@@ -1,701 +1,701 @@
-# 统计方法索引 (Statistical Methods Index)
+# Statistical Methods Index
 
-> 本索引用于帮助选择合适的统计方法。每个方法包含：适用场景、前提假设、变体选择、输出规范。
-
----
-
-## 目录
-
-1. [描述统计](#1-描述统计)
-2. [差异检验](#2-差异检验)
-3. [相关分析](#3-相关分析)
-4. [回归分析](#4-回归分析)
-5. [调节与中介](#5-调节与中介)
-6. [结构方程模型](#6-结构方程模型)
-7. [多层线性模型](#7-多层线性模型)
-8. [元分析](#8-元分析)
-9. [项目反应理论](#9-项目反应理论)
-10. [纵向分析](#10-纵向分析)
-11. [方法选择决策树](#方法选择决策树)
+> This index helps select the appropriate statistical method. Each method includes: applicable scenarios, assumptions, variant selection, and reporting specifications.
 
 ---
 
-## 1. 描述统计
+## Table of Contents
 
-### 1.1 集中趋势
+1. [Descriptive Statistics](#1-descriptive-statistics)
+2. [Difference Tests](#2-difference-tests)
+3. [Correlation Analysis](#3-correlation-analysis)
+4. [Regression Analysis](#4-regression-analysis)
+5. [Moderation and Mediation](#5-moderation-and-mediation)
+6. [Structural Equation Modeling](#6-structural-equation-modeling)
+7. [Hierarchical Linear Modeling](#7-hierarchical-linear-modeling)
+8. [Meta-Analysis](#8-meta-analysis)
+9. [Item Response Theory](#9-item-response-theory)
+10. [Longitudinal Analysis](#10-longitudinal-analysis)
+11. [Method Selection Decision Tree](#method-selection-decision-tree)
 
-| 指标 | 适用数据 | 何时使用 | 何时避免 |
-|------|----------|----------|----------|
-| **均值 (Mean)** | 连续、正态 | 数据对称分布 | 有极端值、偏态分布 |
-| **中位数 (Median)** | 连续/有序 | 偏态分布、有极端值 | 需要代数运算 |
-| **众数 (Mode)** | 任何类型 | 分类变量、双峰分布 | 连续变量通常不报告 |
-| **截尾均值 (Trimmed Mean)** | 连续 | 轻度极端值 | 极端值本身重要时 |
+---
 
-### 1.2 离散程度
+## 1. Descriptive Statistics
 
-| 指标 | 公式/说明 | 适用场景 |
-|------|-----------|----------|
-| **标准差 (SD)** | √[Σ(x-M)²/(n-1)] | 正态分布的默认选择 |
-| **四分位距 (IQR)** | Q3 - Q1 | 偏态分布、有极端值 |
-| **变异系数 (CV)** | SD/M × 100% | 比较不同单位/量级的变异 |
-| **范围 (Range)** | Max - Min | 快速了解数据跨度 |
+### 1.1 Central Tendency
 
-### 1.3 分布形态
+| Measure | Applicable Data | When to Use | When to Avoid |
+|---------|----------------|-------------|---------------|
+| **Mean** | Continuous, normal | Symmetrically distributed data | Extreme values, skewed distribution |
+| **Median** | Continuous/ordinal | Skewed distribution, extreme values | When algebraic operations are needed |
+| **Mode** | Any type | Categorical variables, bimodal distribution | Usually not reported for continuous variables |
+| **Trimmed Mean** | Continuous | Mild extreme values | When extreme values themselves are important |
 
-| 指标 | 正常范围 | 解读 |
-|------|----------|------|
-| **偏度 (Skewness)** | \|S\| < 2 | >0右偏，<0左偏 |
-| **峰度 (Kurtosis)** | \|K\| < 7 | >0尖峰，<0平坦 |
+### 1.2 Dispersion
 
-**正态性检验**：
+| Measure | Formula/Description | Applicable Scenario |
+|---------|---------------------|---------------------|
+| **Standard Deviation (SD)** | sqrt[sum(x-M)^2/(n-1)] | Default choice for normal distribution |
+| **Interquartile Range (IQR)** | Q3 - Q1 | Skewed distribution, extreme values |
+| **Coefficient of Variation (CV)** | SD/M x 100% | Comparing variability across different units/scales |
+| **Range** | Max - Min | Quick overview of data spread |
+
+### 1.3 Distribution Shape
+
+| Measure | Normal Range | Interpretation |
+|---------|-------------|----------------|
+| **Skewness** | \|S\| < 2 | >0 right-skewed, <0 left-skewed |
+| **Kurtosis** | \|K\| < 7 | >0 leptokurtic, <0 platykurtic |
+
+**Normality Tests**:
 - N < 50: Shapiro-Wilk
-- N ≥ 50: Kolmogorov-Smirnov
-- 大样本 (N > 300): 偏度/峰度 + Q-Q图
+- N >= 50: Kolmogorov-Smirnov
+- Large sample (N > 300): Skewness/Kurtosis + Q-Q plot
 
 ---
 
-## 2. 差异检验
+## 2. Difference Tests
 
-### 2.1 方法选择矩阵
+### 2.1 Method Selection Matrix
 
 ```
-                    组数
+                    Number of Groups
                  ┌────┴────┐
-                2组       3+组
+              2 Groups    3+ Groups
                  │          │
-            ┌────┴────┐    ANOVA系列
-         独立样本   配对样本
+            ┌────┴────┐    ANOVA Family
+       Independent  Paired
             │          │
        ┌────┴────┐  ┌──┴──┐
-     正态分布  非正态  配对t  Wilcoxon
+    Normal    Non-normal  Paired t  Wilcoxon
         │         │
-   独立t检验  Mann-Whitney
+  Independent t  Mann-Whitney
 ```
 
-### 2.2 两组比较
+### 2.2 Two-Group Comparison
 
-| 方法 | 前提假设 | 违反假设时的替代 |
-|------|----------|------------------|
-| **独立样本 t 检验** | 正态+方差齐性 | Welch's t (方差不齐), Mann-Whitney U (非正态) |
-| **配对样本 t 检验** | 差值正态分布 | Wilcoxon 符号秩检验 |
-| **Welch's t 检验** | 正态(不要求方差齐) | 默认推荐，比传统t更稳健 |
+| Method | Assumptions | Alternative When Violated |
+|--------|-------------|--------------------------|
+| **Independent Samples t-test** | Normality + homogeneity of variance | Welch's t (unequal variance), Mann-Whitney U (non-normal) |
+| **Paired Samples t-test** | Normality of differences | Wilcoxon Signed-Rank Test |
+| **Welch's t-test** | Normality (does not require equal variance) | Recommended by default, more robust than traditional t |
 
-**效应量**：
+**Effect Size**:
 - Cohen's d = (M1-M2) / SD_pooled
-- 解读：0.2小、0.5中、0.8大
+- Interpretation: 0.2 small, 0.5 medium, 0.8 large
 
-### 2.3 多组比较 (ANOVA)
+### 2.3 Multiple Group Comparison (ANOVA)
 
-| 设计类型 | 方法 | 前提假设 | 非参数替代 |
-|----------|------|----------|------------|
-| 单因素组间 | One-way ANOVA | 正态+方差齐 | Kruskal-Wallis |
-| 单因素组内 | Repeated Measures ANOVA | 正态+球形假设 | Friedman |
-| 双因素组间 | Two-way ANOVA | 正态+方差齐 | 无直接替代 |
-| 混合设计 | Mixed ANOVA | 正态+球形+方差齐 | 考虑 HLM |
+| Design Type | Method | Assumptions | Nonparametric Alternative |
+|-------------|--------|-------------|--------------------------|
+| One-way between-subjects | One-way ANOVA | Normality + equal variance | Kruskal-Wallis |
+| One-way within-subjects | Repeated Measures ANOVA | Normality + sphericity | Friedman |
+| Two-way between-subjects | Two-way ANOVA | Normality + equal variance | No direct alternative |
+| Mixed design | Mixed ANOVA | Normality + sphericity + equal variance | Consider HLM |
 
-**假设检验**：
-- 方差齐性: Levene's test (p > .05 满足)
-- 球形假设: Mauchly's test (p > .05 满足)
-- 球形不满足: Greenhouse-Geisser 或 Huynh-Feldt 校正
+**Assumption Tests**:
+- Homogeneity of variance: Levene's test (p > .05 satisfied)
+- Sphericity: Mauchly's test (p > .05 satisfied)
+- Sphericity violated: Greenhouse-Geisser or Huynh-Feldt correction
 
-**事后检验选择**：
-| 场景 | 推荐方法 |
-|------|----------|
-| 方差齐、样本量相等 | Tukey HSD |
-| 方差不齐 | Games-Howell |
-| 保守估计 | Bonferroni |
-| 预设对比 | Planned Contrasts |
+**Post Hoc Test Selection**:
+| Scenario | Recommended Method |
+|----------|-------------------|
+| Equal variance, equal sample sizes | Tukey HSD |
+| Unequal variance | Games-Howell |
+| Conservative estimate | Bonferroni |
+| Pre-planned comparisons | Planned Contrasts |
 
 ---
 
-## 3. 相关分析
+## 3. Correlation Analysis
 
-### 3.1 相关系数选择
+### 3.1 Correlation Coefficient Selection
 
-| 变量组合 | 方法 | 假设 |
-|----------|------|------|
-| 连续 × 连续 (正态) | **Pearson r** | 线性关系、双变量正态 |
-| 连续 × 连续 (非正态/有序) | **Spearman ρ** | 单调关系 |
-| 有序 × 有序 | **Kendall τ** | 小样本更稳健 |
-| 二分 × 二分 | **Phi φ** | 2×2列联表 |
-| 二分 × 连续 | **Point-biserial** | 等同于Pearson |
-| 名义 × 名义 | **Cramér's V** | 任意列联表 |
+| Variable Combination | Method | Assumptions |
+|---------------------|--------|-------------|
+| Continuous x Continuous (normal) | **Pearson r** | Linear relationship, bivariate normality |
+| Continuous x Continuous (non-normal/ordinal) | **Spearman rho** | Monotonic relationship |
+| Ordinal x Ordinal | **Kendall tau** | More robust for small samples |
+| Dichotomous x Dichotomous | **Phi** | 2x2 contingency table |
+| Dichotomous x Continuous | **Point-biserial** | Equivalent to Pearson |
+| Nominal x Nominal | **Cramer's V** | Any contingency table |
 
-### 3.2 偏相关与半偏相关
+### 3.2 Partial and Semi-Partial Correlation
 
-- **偏相关 (Partial)**: 控制Z后，X与Y的"纯"相关
-- **半偏相关 (Part/Semi-partial)**: 仅从X中排除Z的影响
+- **Partial Correlation**: The "pure" correlation between X and Y after controlling for Z
+- **Semi-Partial (Part) Correlation**: Removing Z's influence only from X
 
 ```python
-# 偏相关：X与Y的关系，控制Z
+# Partial correlation: X-Y relationship, controlling for Z
 partial_corr = (r_xy - r_xz * r_yz) / sqrt((1-r_xz²)(1-r_yz²))
 ```
 
-### 3.3 效应量解读
+### 3.3 Effect Size Interpretation
 
-| r 范围 | 效应大小 | Cohen's d 等价 |
-|--------|----------|----------------|
-| .10 | 小 | 0.20 |
-| .30 | 中 | 0.50 |
-| .50 | 大 | 0.80 |
-
----
-
-## 4. 回归分析
-
-### 4.1 回归类型选择
-
-| 因变量类型 | 方法 | 链接函数 |
-|------------|------|----------|
-| 连续 (正态) | **线性回归 (OLS)** | Identity |
-| 二分 (0/1) | **Logistic 回归** | Logit |
-| 多分类 (无序) | **多项 Logistic** | Logit |
-| 多分类 (有序) | **有序 Logistic** | Cumulative logit |
-| 计数 | **Poisson 回归** | Log |
-| 计数 (过散布) | **负二项回归** | Log |
-
-### 4.2 线性回归假设检验
-
-| 假设 | 检验方法 | 违反时的处理 |
-|------|----------|--------------|
-| 线性关系 | 残差图、RESET检验 | 添加多项式项、变量变换 |
-| 残差正态 | Q-Q图、Shapiro-Wilk | 大样本可忽略、稳健标准误 |
-| 同方差性 | Breusch-Pagan、残差图 | 稳健标准误 (HC3)、WLS |
-| 无自相关 | Durbin-Watson (时序) | GLS、添加滞后项 |
-| 无多重共线 | VIF < 10, Tolerance > 0.1 | 删除/合并变量、中心化 |
-
-### 4.3 模型比较
-
-- **嵌套模型**: F 检验 (ΔR²)、似然比检验
-- **非嵌套模型**: AIC、BIC (越小越好)
-
-```
-模型选择准则：
-- AIC = -2LL + 2k (平衡拟合与复杂度)
-- BIC = -2LL + k*ln(n) (更惩罚复杂模型)
-```
-
-### 4.4 效应量
-
-| 指标 | 公式 | 解读 |
-|------|------|------|
-| R² | SS_reg / SS_total | 解释的方差比例 |
-| Adjusted R² | 1 - (1-R²)(n-1)/(n-k-1) | 考虑自变量数量 |
-| f² | R² / (1-R²) | Cohen's f²: .02小/.15中/.35大 |
-| β | 标准化系数 | 可比较不同变量的相对重要性 |
+| r Range | Effect Size | Cohen's d Equivalent |
+|---------|-------------|---------------------|
+| .10 | Small | 0.20 |
+| .30 | Medium | 0.50 |
+| .50 | Large | 0.80 |
 
 ---
 
-## 5. 调节与中介
+## 4. Regression Analysis
 
-### 5.1 调节效应 (Moderation)
+### 4.1 Regression Type Selection
 
-**概念**: W 改变 X→Y 关系的强度或方向
+| Dependent Variable Type | Method | Link Function |
+|------------------------|--------|---------------|
+| Continuous (normal) | **Linear Regression (OLS)** | Identity |
+| Dichotomous (0/1) | **Logistic Regression** | Logit |
+| Multicategorical (unordered) | **Multinomial Logistic** | Logit |
+| Multicategorical (ordered) | **Ordinal Logistic** | Cumulative logit |
+| Count | **Poisson Regression** | Log |
+| Count (overdispersed) | **Negative Binomial Regression** | Log |
+
+### 4.2 Linear Regression Assumption Tests
+
+| Assumption | Test Method | Remedy When Violated |
+|------------|-------------|---------------------|
+| Linearity | Residual plot, RESET test | Add polynomial terms, variable transformation |
+| Normality of residuals | Q-Q plot, Shapiro-Wilk | Can be ignored for large samples, robust SE |
+| Homoscedasticity | Breusch-Pagan, residual plot | Robust SE (HC3), WLS |
+| No autocorrelation | Durbin-Watson (time series) | GLS, add lagged terms |
+| No multicollinearity | VIF < 10, Tolerance > 0.1 | Remove/combine variables, centering |
+
+### 4.3 Model Comparison
+
+- **Nested models**: F test (delta-R-squared), likelihood ratio test
+- **Non-nested models**: AIC, BIC (smaller is better)
 
 ```
-        W (调节变量)
+Model Selection Criteria:
+- AIC = -2LL + 2k (balances fit and complexity)
+- BIC = -2LL + k*ln(n) (penalizes complex models more)
+```
+
+### 4.4 Effect Size
+
+| Measure | Formula | Interpretation |
+|---------|---------|----------------|
+| R-squared | SS_reg / SS_total | Proportion of variance explained |
+| Adjusted R-squared | 1 - (1-R²)(n-1)/(n-k-1) | Accounts for number of predictors |
+| f-squared | R² / (1-R²) | Cohen's f²: .02 small / .15 medium / .35 large |
+| Beta | Standardized coefficient | Allows comparison of relative importance across variables |
+
+---
+
+## 5. Moderation and Mediation
+
+### 5.1 Moderation
+
+**Concept**: W changes the strength or direction of the X to Y relationship
+
+```
+        W (Moderator)
         │
         ▼
    X ──────→ Y
 ```
 
-**分析步骤**:
-1. 变量中心化 (减均值)
-2. 创建交互项 X×W
-3. 回归: Y = b0 + b1·X + b2·W + b3·X×W + ε
-4. 若 b3 显著 → 调节效应存在
+**Analysis Steps**:
+1. Center variables (subtract mean)
+2. Create interaction term X x W
+3. Regression: Y = b0 + b1*X + b2*W + b3*X*W + epsilon
+4. If b3 is significant, moderation effect exists
 
-**简单斜率分析**:
-- W 在 M±1SD 时，X 对 Y 的效应
-- Johnson-Neyman 区域：找出调节变量的显著性转折点
+**Simple Slopes Analysis**:
+- Effect of X on Y when W is at M +/- 1SD
+- Johnson-Neyman region: Identifies the significance transition point of the moderator
 
-### 5.2 中介效应 (Mediation)
+### 5.2 Mediation
 
-**概念**: M 解释 X 如何影响 Y
+**Concept**: M explains how X influences Y
 
 ```
-        M (中介变量)
+        M (Mediator)
        ↗     ↘
    X ──────→ Y
-     (直接效应)
+     (Direct Effect)
 ```
 
-**现代方法** (推荐): Bootstrap 法
-- 间接效应 = a × b
-- 95% CI 不包含0 → 显著
+**Modern Method** (recommended): Bootstrap
+- Indirect effect = a x b
+- 95% CI does not contain 0 implies significance
 
-**中介类型**:
-| 类型 | 条件 | 解读 |
-|------|------|------|
-| 完全中介 | c'不显著，a×b显著 | X 完全通过 M 影响 Y |
-| 部分中介 | c'显著，a×b显著 | X 部分通过 M 影响 Y |
-| 无中介 | a×b不显著 | M 不是中介 |
+**Types of Mediation**:
+| Type | Condition | Interpretation |
+|------|-----------|----------------|
+| Full mediation | c' not significant, a*b significant | X influences Y entirely through M |
+| Partial mediation | c' significant, a*b significant | X partially influences Y through M |
+| No mediation | a*b not significant | M is not a mediator |
 
-### 5.3 有调节的中介 / 有中介的调节
+### 5.3 Moderated Mediation / Mediated Moderation
 
-**有调节的中介 (Moderated Mediation)**:
-- 中介效应的强度取决于调节变量
-- 条件间接效应 = a(W) × b 或 a × b(W)
+**Moderated Mediation**:
+- The strength of the mediation effect depends on the moderator
+- Conditional indirect effect = a(W) x b or a x b(W)
 
-**有中介的调节 (Mediated Moderation)**:
-- 调节效应通过中介变量传递
-- 实际上是有调节的中介的特例
+**Mediated Moderation**:
+- The moderation effect is transmitted through a mediator
+- Actually a special case of moderated mediation
 
-**工具**: PROCESS macro (Hayes), lavaan
-
----
-
-## 6. 结构方程模型 (SEM)
-
-### 6.1 适用场景
-
-- 多个因变量
-- 潜变量测量
-- 复杂路径关系
-- 验证理论模型
-
-### 6.2 模型类型
-
-| 类型 | 用途 | 特点 |
-|------|------|------|
-| **路径分析** | 观测变量间关系 | 无潜变量 |
-| **CFA** | 验证量表结构 | 仅测量模型 |
-| **完整SEM** | 综合分析 | 测量+结构 |
-| **多组SEM** | 组间比较 | 测量等值性 |
-
-### 6.3 拟合指标
-
-| 指标 | 优秀 | 可接受 | 类型 |
-|------|------|--------|------|
-| χ²/df | < 2 | < 3 | 绝对 |
-| RMSEA | < .05 | < .08 | 绝对 |
-| SRMR | < .05 | < .08 | 绝对 |
-| CFI | > .95 | > .90 | 相对 |
-| TLI | > .95 | > .90 | 相对 |
-
-**报告规范**: 至少报告 χ²(df)、RMSEA [90%CI]、CFI、SRMR
-
-### 6.4 常见问题处理
-
-| 问题 | 诊断 | 解决方案 |
-|------|------|----------|
-| 模型不收敛 | 警告信息 | 检查起始值、简化模型 |
-| 负方差 | Heywood case | 固定参数、检查数据 |
-| 拟合差 | 修正指数 | 理论指导下添加路径/相关 |
-| 样本量不足 | N < 200 | 简化模型、使用MLR |
+**Tools**: PROCESS macro (Hayes), lavaan
 
 ---
 
-## 7. 多层线性模型 (HLM)
+## 6. Structural Equation Modeling (SEM)
 
-### 7.1 适用场景
+### 6.1 Applicable Scenarios
 
-- 嵌套数据 (学生嵌套在班级)
-- 重复测量 (时间点嵌套在个体)
-- 跨层交互作用
+- Multiple dependent variables
+- Latent variable measurement
+- Complex path relationships
+- Theory model validation
 
-### 7.2 组内相关系数 (ICC)
+### 6.2 Model Types
+
+| Type | Purpose | Characteristics |
+|------|---------|-----------------|
+| **Path Analysis** | Relationships among observed variables | No latent variables |
+| **CFA** | Validate scale structure | Measurement model only |
+| **Full SEM** | Comprehensive analysis | Measurement + structural |
+| **Multi-group SEM** | Between-group comparison | Measurement invariance |
+
+### 6.3 Fit Indices
+
+| Index | Excellent | Acceptable | Type |
+|-------|-----------|------------|------|
+| chi-squared/df | < 2 | < 3 | Absolute |
+| RMSEA | < .05 | < .08 | Absolute |
+| SRMR | < .05 | < .08 | Absolute |
+| CFI | > .95 | > .90 | Relative |
+| TLI | > .95 | > .90 | Relative |
+
+**Reporting Standard**: Report at least chi-squared(df), RMSEA [90%CI], CFI, SRMR
+
+### 6.4 Common Issues and Solutions
+
+| Issue | Diagnosis | Solution |
+|-------|-----------|----------|
+| Non-convergence | Warning messages | Check starting values, simplify model |
+| Negative variance | Heywood case | Fix parameters, check data |
+| Poor fit | Modification indices | Add paths/correlations guided by theory |
+| Insufficient sample size | N < 200 | Simplify model, use MLR |
+
+---
+
+## 7. Hierarchical Linear Modeling (HLM)
+
+### 7.1 Applicable Scenarios
+
+- Nested data (students nested within classrooms)
+- Repeated measures (time points nested within individuals)
+- Cross-level interactions
+
+### 7.2 Intraclass Correlation Coefficient (ICC)
 
 ```
 ICC = τ₀₀ / (τ₀₀ + σ²)
 ```
 
-- ICC > .05 且具有理论嵌套结构 → 建议使用 HLM
-- ICC 表示组间差异占总差异的比例
+- ICC > .05 and theoretical nesting structure present implies HLM is recommended
+- ICC represents the proportion of between-group variance relative to total variance
 
-### 7.3 模型构建策略
+### 7.3 Model Building Strategy
 
-1. **零模型** (Null Model): 仅随机截距，计算 ICC
-2. **随机截距模型**: 添加 Level-1 预测变量
-3. **随机斜率模型**: 允许斜率随组变化
-4. **跨层交互**: Level-2 变量调节 Level-1 效应
+1. **Null Model**: Random intercept only, compute ICC
+2. **Random Intercept Model**: Add Level-1 predictors
+3. **Random Slope Model**: Allow slopes to vary across groups
+4. **Cross-level Interaction**: Level-2 variables moderate Level-1 effects
 
-### 7.4 中心化策略
+### 7.4 Centering Strategies
 
-| 中心化类型 | 适用场景 | 效果 |
-|------------|----------|------|
-| **组均值中心化 (CWC)** | Level-1 变量 | 分离组内/组间效应 |
-| **总均值中心化 (CGM)** | Level-1/2 变量 | 保持原始度量 |
-| **不中心化** | 有意义的零点 | 截距可解释 |
-
----
-
-## 8. 元分析
-
-### 8.1 效应量转换
-
-| 原始指标 | 转换为 d | 转换为 r |
-|----------|----------|----------|
-| Cohen's d | - | r = d / √(d² + 4) |
-| Pearson r | d = 2r / √(1-r²) | - |
-| OR | d = ln(OR) × √3/π | r ≈ d / √(d² + 4) |
-| t 值 | d = 2t / √(df) | r = √(t²/(t²+df)) |
-| F 值 (df1=1) | d = 2√(F/df2) | r = √(F/(F+df2)) |
-
-### 8.2 模型选择
-
-| 模型 | 假设 | 适用场景 |
-|------|------|----------|
-| **固定效应** | 真实效应相同 | 同质研究、探索性 |
-| **随机效应** | 真实效应有分布 | 默认推荐 |
-| **混合效应** | 调节变量解释异质性 | 有理论预测变量 |
-
-### 8.3 异质性指标
-
-| 指标 | 计算 | 解读 |
-|------|------|------|
-| Q | Σw(ES-M)² | 显著=存在异质性 |
-| I² | (Q-df)/Q × 100% | 25%低/50%中/75%高 |
-| τ² | 真实效应的方差估计 | 绝对异质性 |
-
-### 8.4 发表偏倚检验
-
-- **漏斗图** (Funnel Plot): 目视不对称性
-- **Egger's Test**: 回归检验 (p < .05 有偏倚)
-- **Trim-and-Fill**: 估计缺失研究并校正
+| Centering Type | Applicable Scenario | Effect |
+|---------------|---------------------|--------|
+| **Group-Mean Centering (CWC)** | Level-1 variables | Separates within-group and between-group effects |
+| **Grand-Mean Centering (CGM)** | Level-1/2 variables | Preserves original metric |
+| **No Centering** | Meaningful zero point | Intercept is interpretable |
 
 ---
 
-## 9. 项目反应理论 (IRT)
+## 8. Meta-Analysis
 
-### 9.1 模型选择
+### 8.1 Effect Size Conversion
 
-| 作答格式 | 参数数量 | 模型 |
-|----------|----------|------|
-| 二分 (0/1) | 1参数 | Rasch |
-| 二分 (0/1) | 2参数 | 2PL |
-| 二分 (0/1) | 3参数 | 3PL (含猜测) |
-| 多级计分 | - | GRM, PCM, GPCM |
+| Original Measure | Convert to d | Convert to r |
+|-----------------|--------------|--------------|
+| Cohen's d | - | r = d / sqrt(d² + 4) |
+| Pearson r | d = 2r / sqrt(1-r²) | - |
+| OR | d = ln(OR) * sqrt(3)/pi | r ≈ d / sqrt(d² + 4) |
+| t value | d = 2t / sqrt(df) | r = sqrt(t²/(t²+df)) |
+| F value (df1=1) | d = 2*sqrt(F/df2) | r = sqrt(F/(F+df2)) |
 
-### 9.2 项目参数
+### 8.2 Model Selection
 
-| 参数 | 符号 | 含义 | 良好范围 |
-|------|------|------|----------|
-| 难度 | b | 50%正确率的能力值 | -3 ~ +3 |
-| 区分度 | a | 曲线斜率 | 0.5 ~ 2.5 |
-| 猜测参数 | c | 渐近线下限 | 0 ~ 0.35 |
+| Model | Assumption | Applicable Scenario |
+|-------|-----------|---------------------|
+| **Fixed Effects** | True effect is the same | Homogeneous studies, exploratory |
+| **Random Effects** | True effects have a distribution | Recommended by default |
+| **Mixed Effects** | Moderators explain heterogeneity | Theoretical predictor variables available |
 
-### 9.3 模型拟合
+### 8.3 Heterogeneity Measures
 
-- **项目拟合**: S-χ² (p > .05 可接受)
-- **整体拟合**: M2 统计量, RMSEA
-- **相对比较**: AIC, BIC
+| Measure | Calculation | Interpretation |
+|---------|-------------|----------------|
+| Q | sum(w*(ES-M)²) | Significant = heterogeneity present |
+| I² | (Q-df)/Q x 100% | 25% low / 50% moderate / 75% high |
+| tau² | Variance estimate of true effects | Absolute heterogeneity |
+
+### 8.4 Publication Bias Tests
+
+- **Funnel Plot**: Visual inspection of asymmetry
+- **Egger's Test**: Regression test (p < .05 indicates bias)
+- **Trim-and-Fill**: Estimates missing studies and adjusts
 
 ---
 
-## 10. 纵向分析
+## 9. Item Response Theory (IRT)
 
-### 10.1 方法选择
+### 9.1 Model Selection
 
-| 研究问题 | 推荐方法 |
-|----------|----------|
-| 组间差异随时间变化 | 重复测量ANOVA / 混合ANOVA |
-| 个体轨迹差异 | 潜增长模型 (LGM) |
-| 变量间的时序因果 | 交叉滞后模型 (CLPM) |
-| 分离特质与状态效应 | 随机截距交叉滞后 (RI-CLPM) |
-| 群体轨迹分类 | 增长混合模型 (GMM) |
+| Response Format | Number of Parameters | Model |
+|----------------|---------------------|-------|
+| Dichotomous (0/1) | 1-parameter | Rasch |
+| Dichotomous (0/1) | 2-parameter | 2PL |
+| Dichotomous (0/1) | 3-parameter | 3PL (includes guessing) |
+| Polytomous | - | GRM, PCM, GPCM |
 
-### 10.2 潜增长模型 (LGM)
+### 9.2 Item Parameters
+
+| Parameter | Symbol | Meaning | Acceptable Range |
+|-----------|--------|---------|-----------------|
+| Difficulty | b | Ability level for 50% correct | -3 to +3 |
+| Discrimination | a | Slope of the curve | 0.5 to 2.5 |
+| Guessing | c | Lower asymptote | 0 to 0.35 |
+
+### 9.3 Model Fit
+
+- **Item fit**: S-chi-squared (p > .05 acceptable)
+- **Overall fit**: M2 statistic, RMSEA
+- **Relative comparison**: AIC, BIC
+
+---
+
+## 10. Longitudinal Analysis
+
+### 10.1 Method Selection
+
+| Research Question | Recommended Method |
+|-------------------|-------------------|
+| Group differences over time | Repeated Measures ANOVA / Mixed ANOVA |
+| Individual trajectory differences | Latent Growth Model (LGM) |
+| Temporal causality between variables | Cross-Lagged Panel Model (CLPM) |
+| Separating trait and state effects | Random Intercept Cross-Lagged (RI-CLPM) |
+| Trajectory classification of subgroups | Growth Mixture Model (GMM) |
+
+### 10.2 Latent Growth Model (LGM)
 
 ```
-测量模型：
+Measurement Model:
 Y_t = η_i + λ_t × η_s + ε_t
 
-η_i = 截距因子 (起始水平)
-η_s = 斜率因子 (变化率)
-λ_t = 时间编码 (0, 1, 2... 或自由估计)
+η_i = Intercept factor (initial level)
+η_s = Slope factor (rate of change)
+λ_t = Time coding (0, 1, 2... or freely estimated)
 ```
 
-### 10.3 交叉滞后模型
+### 10.3 Cross-Lagged Panel Model
 
-**传统 CLPM** 问题:
-- 混淆了组间差异和组内变化
-- 高估跨变量效应
+**Traditional CLPM** issues:
+- Confounds between-person differences with within-person change
+- Overestimates cross-variable effects
 
-**RI-CLPM** 优势:
-- 分离稳定特质 (随机截距)
-- 捕捉真正的时间内变化
+**RI-CLPM** advantages:
+- Separates stable traits (random intercepts)
+- Captures true within-person temporal change
 
 ---
 
-## 方法选择决策树
+## Method Selection Decision Tree
 
-### 差异检验决策
-
-```
-比较均值差异？
-    │
-    ├── 2组
-    │   ├── 独立样本
-    │   │   ├── 正态+方差齐 → 独立t检验
-    │   │   ├── 正态+方差不齐 → Welch's t ⭐推荐
-    │   │   └── 非正态 → Mann-Whitney U
-    │   └── 配对样本
-    │       ├── 差值正态 → 配对t检验
-    │       └── 差值非正态 → Wilcoxon符号秩
-    │
-    └── 3+组
-        ├── 组间设计
-        │   ├── 单因素 → One-way ANOVA / Kruskal-Wallis
-        │   └── 多因素 → Factorial ANOVA
-        ├── 组内设计 → 重复测量ANOVA / Friedman
-        └── 混合设计 → Mixed ANOVA / HLM
-```
-
-### 关系分析决策
+### Difference Test Decision
 
 ```
-探索变量关系？
+Comparing mean differences?
     │
-    ├── 预测/解释
-    │   ├── DV连续 → 线性回归
-    │   ├── DV二分 → Logistic回归
-    │   ├── DV计数 → Poisson/负二项
-    │   └── DV有序 → 有序Logistic
+    ├── 2 Groups
+    │   ├── Independent Samples
+    │   │   ├── Normal + equal variance → Independent t-test
+    │   │   ├── Normal + unequal variance → Welch's t ⭐Recommended
+    │   │   └── Non-normal → Mann-Whitney U
+    │   └── Paired Samples
+    │       ├── Differences normal → Paired t-test
+    │       └── Differences non-normal → Wilcoxon Signed-Rank
     │
-    ├── 中介/调节
-    │   ├── 简单中介 → Bootstrap / PROCESS
-    │   ├── 简单调节 → 层次回归+交互项
-    │   └── 复杂路径 → SEM
-    │
-    └── 潜变量
-        ├── 量表验证 → CFA
-        ├── 潜变量关系 → SEM
-        └── 纵向潜变量 → LGM / RI-CLPM
+    └── 3+ Groups
+        ├── Between-subjects design
+        │   ├── One-factor → One-way ANOVA / Kruskal-Wallis
+        │   └── Multi-factor → Factorial ANOVA
+        ├── Within-subjects design → Repeated Measures ANOVA / Friedman
+        └── Mixed design → Mixed ANOVA / HLM
 ```
 
-### 数据结构决策
+### Relationship Analysis Decision
 
 ```
-数据有嵌套/层次结构？
+Exploring variable relationships?
     │
-    ├── 是 (ICC > .05)
-    │   ├── 2层嵌套 → HLM
-    │   ├── 3+层嵌套 → 多层HLM
-    │   └── 交叉分类 → 交叉随机效应
+    ├── Prediction/Explanation
+    │   ├── DV continuous → Linear Regression
+    │   ├── DV dichotomous → Logistic Regression
+    │   ├── DV count → Poisson / Negative Binomial
+    │   └── DV ordinal → Ordinal Logistic
     │
-    └── 否
-        └── 使用单层分析方法
+    ├── Mediation/Moderation
+    │   ├── Simple mediation → Bootstrap / PROCESS
+    │   ├── Simple moderation → Hierarchical regression + interaction term
+    │   └── Complex paths → SEM
+    │
+    └── Latent Variables
+        ├── Scale validation → CFA
+        ├── Latent variable relationships → SEM
+        └── Longitudinal latent variables → LGM / RI-CLPM
+```
+
+### Data Structure Decision
+
+```
+Does the data have a nested/hierarchical structure?
+    │
+    ├── Yes (ICC > .05)
+    │   ├── 2-level nesting → HLM
+    │   ├── 3+ level nesting → Multi-level HLM
+    │   └── Cross-classified → Cross-classified random effects
+    │
+    └── No
+        └── Use single-level analysis methods
 ```
 
 ---
 
-## 附录：报告规范速查
+## Appendix: Reporting Standards Quick Reference
 
-### 差异检验
+### Difference Tests
 
 ```
-t检验: t(df) = X.XX, p = .XXX, d = X.XX
+t-test: t(df) = X.XX, p = .XXX, d = X.XX
 ANOVA: F(df1, df2) = X.XX, p = .XXX, η² = .XX
 ```
 
-### 回归分析
+### Regression Analysis
 
 ```
-回归系数: B = X.XX, SE = X.XX, β = .XX, t = X.XX, p = .XXX
-模型拟合: R² = .XX, F(df1, df2) = X.XX, p < .001
+Regression coefficient: B = X.XX, SE = X.XX, β = .XX, t = X.XX, p = .XXX
+Model fit: R² = .XX, F(df1, df2) = X.XX, p < .001
 ```
 
 ### SEM
 
 ```
-模型拟合: χ²(df) = X.XX, p = .XXX, CFI = .XX, TLI = .XX,
+Model fit: χ²(df) = X.XX, p = .XXX, CFI = .XX, TLI = .XX,
          RMSEA = .XX [90% CI: .XX, .XX], SRMR = .XX
 ```
 
-### 元分析
+### Meta-Analysis
 
 ```
-整体效应: d = X.XX [95% CI: X.XX, X.XX], Z = X.XX, p < .001
-异质性: Q(df) = X.XX, p = .XXX, I² = XX%
+Overall effect: d = X.XX [95% CI: X.XX, X.XX], Z = X.XX, p < .001
+Heterogeneity: Q(df) = X.XX, p = .XXX, I² = XX%
 ```
 
 ---
 
-## 11. 医学研究专用方法
+## 11. Medical Research Methods
 
-### 11.1 信效度分析
+### 11.1 Reliability and Validity Analysis
 
-**适用场景**: 量表/问卷开发与验证
+**Applicable Scenario**: Scale/questionnaire development and validation
 
-| 指标 | 方法 | 标准 | 用途 |
-|------|------|------|------|
-| 内部一致性 | Cronbach's α | > .70 可接受, > .80 良好 | 量表整体信度 |
-| 合成信度 | McDonald's ω | > .70 可接受 | 更准确的信度估计 |
-| 重测信度 | ICC 或 Pearson r | > .70 | 时间稳定性 |
-| 评分者信度 | ICC, Kappa | ICC > .75 良好 | 评分者一致性 |
-| 内容效度 | CVI (Content Validity Index) | > .78 | 专家评审 |
-| 结构效度 | EFA → CFA | 拟合指标达标 | 因子结构 |
-| 效标效度 | 与金标准相关 | r 显著 | 外部标准 |
+| Measure | Method | Standard | Purpose |
+|---------|--------|----------|---------|
+| Internal consistency | Cronbach's alpha | > .70 acceptable, > .80 good | Overall scale reliability |
+| Composite reliability | McDonald's omega | > .70 acceptable | More accurate reliability estimate |
+| Test-retest reliability | ICC or Pearson r | > .70 | Temporal stability |
+| Inter-rater reliability | ICC, Kappa | ICC > .75 good | Rater agreement |
+| Content validity | CVI (Content Validity Index) | > .78 | Expert review |
+| Construct validity | EFA then CFA | Fit indices met | Factor structure |
+| Criterion validity | Correlation with gold standard | r significant | External criterion |
 
-**分析流程**:
+**Analysis Workflow**:
 ```
-量表验证标准流程:
-1. 项目分析 (CITC < .30 删题)
-2. EFA 探索因子结构 (KMO > .60, Bartlett's显著)
-3. CFA 验证因子结构 (CFI > .90, RMSEA < .08)
-4. 信度 (Cronbach's α > .70)
-5. 效度 (收敛效度 AVE > .50, 区分效度)
+Standard Scale Validation Procedure:
+1. Item analysis (delete items with CITC < .30)
+2. EFA to explore factor structure (KMO > .60, Bartlett's significant)
+3. CFA to confirm factor structure (CFI > .90, RMSEA < .08)
+4. Reliability (Cronbach's alpha > .70)
+5. Validity (convergent validity AVE > .50, discriminant validity)
 ```
 
-### 11.2 诊断准确性分析
+### 11.2 Diagnostic Accuracy Analysis
 
-| 指标 | 定义 | 公式 |
-|------|------|------|
-| 敏感度 (Sensitivity) | 真阳性率 | TP / (TP + FN) |
-| 特异度 (Specificity) | 真阴性率 | TN / (TN + FP) |
-| 阳性预测值 (PPV) | 阳性中真阳比 | TP / (TP + FP) |
-| 阴性预测值 (NPV) | 阴性中真阴比 | TN / (TN + FN) |
-| 阳性似然比 (LR+) | 阳性诊断价值 | Se / (1 - Sp) |
-| 阴性似然比 (LR-) | 阴性排除价值 | (1 - Se) / Sp |
-| AUC | 整体诊断准确性 | 0.7-0.8 可接受, 0.8-0.9 良好, >0.9 优秀 |
-| Youden's J | 最佳截断值 | Se + Sp - 1 |
+| Measure | Definition | Formula |
+|---------|-----------|---------|
+| Sensitivity | True positive rate | TP / (TP + FN) |
+| Specificity | True negative rate | TN / (TN + FP) |
+| Positive Predictive Value (PPV) | Proportion of true positives among positives | TP / (TP + FP) |
+| Negative Predictive Value (NPV) | Proportion of true negatives among negatives | TN / (TN + FN) |
+| Positive Likelihood Ratio (LR+) | Diagnostic value of a positive result | Se / (1 - Sp) |
+| Negative Likelihood Ratio (LR-) | Exclusion value of a negative result | (1 - Se) / Sp |
+| AUC | Overall diagnostic accuracy | 0.7-0.8 acceptable, 0.8-0.9 good, >0.9 excellent |
+| Youden's J | Optimal cutoff value | Se + Sp - 1 |
 
-**报告规范**:
+**Reporting Standard**:
 ```
 The ROC analysis yielded an AUC of .85 (95% CI [.80, .90]).
 At the optimal cutoff of X, sensitivity was .82 and specificity was .78.
 ```
 
-### 11.3 生存分析
+### 11.3 Survival Analysis
 
-| 方法 | 适用场景 | 前提假设 |
-|------|----------|----------|
-| Kaplan-Meier | 描述生存函数 | 删失独立 |
-| Log-rank test | 比较生存曲线 | 比例风险 |
-| Cox 回归 | 多因素预测 | 比例风险 (PH假设) |
+| Method | Applicable Scenario | Assumptions |
+|--------|---------------------|-------------|
+| Kaplan-Meier | Describe survival function | Independent censoring |
+| Log-rank test | Compare survival curves | Proportional hazards |
+| Cox Regression | Multivariable prediction | Proportional hazards (PH assumption) |
 
-**PH假设检验**: Schoenfeld 残差检验 (p > .05 满足)
+**PH Assumption Test**: Schoenfeld residuals test (p > .05 satisfied)
 
-**效应量**: 风险比 HR (Hazard Ratio)
-- HR > 1: 暴露组风险更高
-- HR < 1: 暴露组风险更低
-- HR = 1: 无差异
+**Effect Size**: Hazard Ratio (HR)
+- HR > 1: Higher risk in the exposed group
+- HR < 1: Lower risk in the exposed group
+- HR = 1: No difference
 
-**报告规范**:
+**Reporting Standard**:
 ```
-Cox回归: HR = X.XX (95% CI [X.XX, X.XX]), p = .XXX
-K-M中位生存时间: X months (95% CI [X, X])
-```
-
-### 11.4 一致性分析
-
-| 方法 | 适用场景 | 数据类型 |
-|------|----------|----------|
-| Cohen's Kappa | 2个评分者 | 分类 |
-| Fleiss' Kappa | 3+个评分者 | 分类 |
-| ICC | 2+个评分者 | 连续 |
-| Bland-Altman | 2种测量方法 | 连续 |
-
-**Kappa 解读**:
-| κ 范围 | 一致性水平 |
-|--------|-----------|
-| < 0.20 | 差 |
-| 0.21-0.40 | 一般 |
-| 0.41-0.60 | 中等 |
-| 0.61-0.80 | 较好 |
-| 0.81-1.00 | 优秀 |
-
-**ICC 类型选择**:
-| 类型 | 模型 | 定义 | 适用场景 |
-|------|------|------|----------|
-| ICC(1,1) | 单向随机 | 一致性 | 每个目标由不同评分者评 |
-| ICC(2,1) | 双向随机 | 一致性 | 评分者随机抽样，关注绝对一致 |
-| ICC(3,1) | 双向混合 | 一致性 | 固定评分者，最常用 |
-
-### 11.5 样本量计算速查
-
-| 分析方法 | 小效应量 | 中效应量 | 大效应量 | 参数 |
-|----------|---------|---------|---------|------|
-| 独立 t 检验 | 394/组 | 64/组 | 26/组 | d=0.2/0.5/0.8 |
-| 配对 t 检验 | 199 | 34 | 15 | d=0.2/0.5/0.8 |
-| ANOVA (3组) | 969/组 | 159/组 | 66/组 | f=0.1/0.25/0.4 |
-| 相关 | 783 | 85 | 29 | r=.1/.3/.5 |
-| 回归 (3 IVs) | 550 | 77 | 36 | f²=.02/.15/.35 |
-| 卡方 (2×2) | 785 | 88 | 26 | w=.1/.3/.5 |
-| SEM | — | 200-400 | — | 经验规则: N > 200 或 10:1 |
-| HLM | — | 30+组×30+/组 | — | 经验规则: 组数更重要 |
-
-> 默认参数: α = .05, power = .80, 双侧检验
-
-### 11.6 倾向性得分匹配 (PSM)
-
-**适用场景**: 观察性研究中控制混杂因素
-
-**分析流程**:
-```
-1. 估计倾向性得分 (Logistic 回归)
-2. 匹配方法选择 (最近邻/卡尺/核匹配)
-3. 匹配质量检查 (SMD < 0.1)
-4. 匹配后效应估计
-5. 敏感性分析
+Cox regression: HR = X.XX (95% CI [X.XX, X.XX]), p = .XXX
+K-M median survival time: X months (95% CI [X, X])
 ```
 
-**标准化均值差 (SMD)**:
-- SMD < 0.1: 平衡良好
-- SMD 0.1-0.25: 可接受
-- SMD > 0.25: 平衡不足
+### 11.4 Agreement Analysis
+
+| Method | Applicable Scenario | Data Type |
+|--------|---------------------|-----------|
+| Cohen's Kappa | 2 raters | Categorical |
+| Fleiss' Kappa | 3+ raters | Categorical |
+| ICC | 2+ raters | Continuous |
+| Bland-Altman | 2 measurement methods | Continuous |
+
+**Kappa Interpretation**:
+| kappa Range | Agreement Level |
+|-------------|----------------|
+| < 0.20 | Poor |
+| 0.21-0.40 | Fair |
+| 0.41-0.60 | Moderate |
+| 0.61-0.80 | Substantial |
+| 0.81-1.00 | Excellent |
+
+**ICC Type Selection**:
+| Type | Model | Definition | Applicable Scenario |
+|------|-------|-----------|---------------------|
+| ICC(1,1) | One-way random | Consistency | Each target rated by different raters |
+| ICC(2,1) | Two-way random | Consistency | Raters randomly sampled, focus on absolute agreement |
+| ICC(3,1) | Two-way mixed | Consistency | Fixed raters, most commonly used |
+
+### 11.5 Sample Size Calculation Quick Reference
+
+| Analysis Method | Small Effect | Medium Effect | Large Effect | Parameters |
+|----------------|-------------|---------------|-------------|------------|
+| Independent t-test | 394/group | 64/group | 26/group | d=0.2/0.5/0.8 |
+| Paired t-test | 199 | 34 | 15 | d=0.2/0.5/0.8 |
+| ANOVA (3 groups) | 969/group | 159/group | 66/group | f=0.1/0.25/0.4 |
+| Correlation | 783 | 85 | 29 | r=.1/.3/.5 |
+| Regression (3 IVs) | 550 | 77 | 36 | f²=.02/.15/.35 |
+| Chi-square (2x2) | 785 | 88 | 26 | w=.1/.3/.5 |
+| SEM | — | 200-400 | — | Rule of thumb: N > 200 or 10:1 |
+| HLM | — | 30+ groups x 30+/group | — | Rule of thumb: number of groups is more important |
+
+> Default parameters: alpha = .05, power = .80, two-tailed test
+
+### 11.6 Propensity Score Matching (PSM)
+
+**Applicable Scenario**: Controlling confounders in observational studies
+
+**Analysis Workflow**:
+```
+1. Estimate propensity scores (Logistic regression)
+2. Select matching method (nearest neighbor / caliper / kernel matching)
+3. Check matching quality (SMD < 0.1)
+4. Estimate effects after matching
+5. Sensitivity analysis
+```
+
+**Standardized Mean Difference (SMD)**:
+- SMD < 0.1: Well balanced
+- SMD 0.1-0.25: Acceptable
+- SMD > 0.25: Insufficient balance
 
 ---
 
-## 方法选择决策树（医学专用）
+## Method Selection Decision Tree (Medical Research)
 
 ```
-医学研究常见分析需求:
+Common medical research analysis needs:
     │
-    ├── 量表开发/验证？
-    │   ├── 探索结构 → EFA
-    │   ├── 验证结构 → CFA
-    │   └── 信度 → Cronbach's α + ICC
+    ├── Scale development/validation?
+    │   ├── Explore structure → EFA
+    │   ├── Confirm structure → CFA
+    │   └── Reliability → Cronbach's alpha + ICC
     │
-    ├── 诊断/筛查工具评价？
-    │   ├── 诊断准确性 → ROC/AUC
-    │   ├── 截断值确定 → Youden's index
-    │   └── 方法比较 → Bland-Altman
+    ├── Diagnostic/screening tool evaluation?
+    │   ├── Diagnostic accuracy → ROC/AUC
+    │   ├── Cutoff determination → Youden's index
+    │   └── Method comparison → Bland-Altman
     │
-    ├── 预后/生存分析？
-    │   ├── 描述生存 → Kaplan-Meier
-    │   ├── 组间比较 → Log-rank
-    │   └── 多因素预测 → Cox 回归
+    ├── Prognosis/survival analysis?
+    │   ├── Describe survival → Kaplan-Meier
+    │   ├── Group comparison → Log-rank
+    │   └── Multivariable prediction → Cox Regression
     │
-    ├── 观察性研究控制混杂？
-    │   ├── 已知混杂 → 多因素回归
-    │   └── 多个混杂 → 倾向性得分匹配
+    ├── Controlling confounders in observational studies?
+    │   ├── Known confounders → Multivariable regression
+    │   └── Multiple confounders → Propensity score matching
     │
-    └── 评分者一致性？
-        ├── 分类数据 → Kappa
-        ├── 连续数据 → ICC
-        └── 方法比较 → Bland-Altman
+    └── Inter-rater agreement?
+        ├── Categorical data → Kappa
+        ├── Continuous data → ICC
+        └── Method comparison → Bland-Altman
 ```
 
 ---
 
-## 附录：报告规范速查（增补）
+## Appendix: Reporting Standards Quick Reference (Supplement)
 
-### 信效度
+### Reliability and Validity
 
 ```
-信度: Cronbach's α = .XX
+Reliability: Cronbach's alpha = .XX
 ICC: ICC(3,1) = .XX, 95% CI [.XX, .XX]
 ```
 
-### 诊断分析
+### Diagnostic Analysis
 
 ```
 AUC = .XX (95% CI [.XX, .XX])
-最佳截断值: X (Youden's J = .XX)
-敏感度 = .XX, 特异度 = .XX
+Optimal cutoff: X (Youden's J = .XX)
+Sensitivity = .XX, Specificity = .XX
 ```
 
-### 生存分析
+### Survival Analysis
 
 ```
-K-M: 中位生存时间 = X months (95% CI [X, X])
+K-M: Median survival time = X months (95% CI [X, X])
 Log-rank: χ²(df) = X.XX, p = .XXX
 Cox: HR = X.XX (95% CI [X.XX, X.XX]), p = .XXX
 ```
 
-### 一致性
+### Agreement
 
 ```
 Kappa: κ = .XX (95% CI [.XX, .XX]), p = .XXX
@@ -705,5 +705,5 @@ Bland-Altman: Mean difference = X.XX, LoA = [X.XX, X.XX]
 
 ---
 
-*索引版本: 3.0 | 更新日期: 2026-02-09*
-*新增: 医学专用方法 (信效度、诊断分析、生存分析、一致性、样本量计算、PSM)*
+*Index version: 3.0 | Last updated: 2026-02-09*
+*Added: Medical research methods (reliability/validity, diagnostic analysis, survival analysis, agreement, sample size calculation, PSM)*
