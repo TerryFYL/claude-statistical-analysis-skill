@@ -1,0 +1,22 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker build artifacts
+docker/examples/*.pdf
+
+# Data files (never commit user data)
+*.xlsx
+*.csv
+*.sav
+*.xls
+data/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# IDE
+.vscode/
+.idea/
